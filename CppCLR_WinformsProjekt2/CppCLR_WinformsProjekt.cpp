@@ -9,7 +9,7 @@
 
 #include "ErrorCode.h"
 #include "PyroCamLibraryInterface.h"
-
+#include "stb_image_write.h"
 
 #include <string>
 

@@ -15,7 +15,12 @@
 #include <string>
 #include <stdio.h>
 #include "BitMap.cpp"
-
+#include <stdio.h>
+#include <stddef.h>
+#include <iostream>
+#include <fstream>
+#include <vector>
+//#include <opencv2/opencv.hpp>
 
 
 //---- Library Info ----
@@ -60,6 +65,7 @@ namespace CppCLR_WinformsProjekt {
 	using namespace System::Drawing;
 	using namespace std;
 	using namespace System::Threading;
+	
 
 	/// <summary>
 	/// Zusammenfassung für Form1
@@ -102,13 +108,17 @@ namespace CppCLR_WinformsProjekt {
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::TextBox^  textBox7;
 	private: System::Windows::Forms::Label^  label27;
+	private: System::Windows::Forms::Label^  label10;
+	private: System::Windows::Forms::Label^  label11;
+	private: System::Windows::Forms::Label^  label28;
+	private: System::Windows::Forms::Label^  label29;
+	private: System::Windows::Forms::Label^  label30;
+	public: char* bildbyte;
+	private: System::Windows::Forms::Label^  label31;
 	public:
+	private: System::Windows::Forms::Label^  label32;
+	public: long LengthOfArray;
 
-	public:
-
-
-		System::String^ datfile;
-		
 
 		Form1(void)
 		{
@@ -180,8 +190,8 @@ namespace CppCLR_WinformsProjekt {
 	private: System::Windows::Forms::Button^  button5;
 	private: System::Windows::Forms::Label^  label9;
 	private: System::Windows::Forms::Button^  button6;
-	private: System::Windows::Forms::Label^  label10;
-	private: System::Windows::Forms::TextBox^  textBox2;
+
+
 	private: System::Windows::Forms::Button^  button7;
 	private: System::Windows::Forms::Button^  button8;
 	private: System::Windows::Forms::RadioButton^  radioButton1;
@@ -253,8 +263,6 @@ namespace CppCLR_WinformsProjekt {
 			this->button5 = (gcnew System::Windows::Forms::Button());
 			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->button6 = (gcnew System::Windows::Forms::Button());
-			this->label10 = (gcnew System::Windows::Forms::Label());
-			this->textBox2 = (gcnew System::Windows::Forms::TextBox());
 			this->button7 = (gcnew System::Windows::Forms::Button());
 			this->button8 = (gcnew System::Windows::Forms::Button());
 			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
@@ -289,6 +297,13 @@ namespace CppCLR_WinformsProjekt {
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
 			this->label27 = (gcnew System::Windows::Forms::Label());
+			this->label10 = (gcnew System::Windows::Forms::Label());
+			this->label11 = (gcnew System::Windows::Forms::Label());
+			this->label28 = (gcnew System::Windows::Forms::Label());
+			this->label29 = (gcnew System::Windows::Forms::Label());
+			this->label30 = (gcnew System::Windows::Forms::Label());
+			this->label31 = (gcnew System::Windows::Forms::Label());
+			this->label32 = (gcnew System::Windows::Forms::Label());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar3))->BeginInit();
@@ -300,7 +315,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// textBox1
 			// 
-			this->textBox1->Location = System::Drawing::Point(32, 526);
+			this->textBox1->Location = System::Drawing::Point(28, 566);
 			this->textBox1->Multiline = true;
 			this->textBox1->Name = L"textBox1";
 			this->textBox1->ScrollBars = System::Windows::Forms::ScrollBars::Vertical;
@@ -310,7 +325,7 @@ namespace CppCLR_WinformsProjekt {
 			// label1
 			// 
 			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(390, 527);
+			this->label1->Location = System::Drawing::Point(386, 567);
 			this->label1->Name = L"label1";
 			this->label1->Size = System::Drawing::Size(87, 13);
 			this->label1->TabIndex = 1;
@@ -328,19 +343,20 @@ namespace CppCLR_WinformsProjekt {
 			// label2
 			// 
 			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(390, 742);
+			this->label2->Location = System::Drawing::Point(366, 784);
 			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(71, 13);
+			this->label2->Size = System::Drawing::Size(0, 13);
 			this->label2->TabIndex = 3;
-			this->label2->Text = L"Denoise Filter";
 			// 
 			// trackBar1
 			// 
-			this->trackBar1->Location = System::Drawing::Point(373, 777);
-			this->trackBar1->Maximum = 25;
+			this->trackBar1->Location = System::Drawing::Point(343, 816);
+			this->trackBar1->Maximum = 95;
 			this->trackBar1->Name = L"trackBar1";
 			this->trackBar1->Size = System::Drawing::Size(121, 45);
 			this->trackBar1->TabIndex = 4;
+			this->trackBar1->TickFrequency = 5;
+			this->trackBar1->Value = 85;
 			// 
 			// label3
 			// 
@@ -362,7 +378,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// trackBar2
 			// 
-			this->trackBar2->Location = System::Drawing::Point(373, 553);
+			this->trackBar2->Location = System::Drawing::Point(369, 593);
 			this->trackBar2->Maximum = 25;
 			this->trackBar2->Name = L"trackBar2";
 			this->trackBar2->Size = System::Drawing::Size(121, 45);
@@ -370,16 +386,17 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// trackBar3
 			// 
-			this->trackBar3->Location = System::Drawing::Point(373, 604);
+			this->trackBar3->Location = System::Drawing::Point(369, 644);
 			this->trackBar3->Maximum = 25;
 			this->trackBar3->Name = L"trackBar3";
 			this->trackBar3->Size = System::Drawing::Size(121, 45);
 			this->trackBar3->TabIndex = 8;
+			this->trackBar3->Scroll += gcnew System::EventHandler(this, &Form1::trackBar3_Scroll);
 			// 
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(665, 527);
+			this->label5->Location = System::Drawing::Point(661, 567);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(90, 13);
 			this->label5->TabIndex = 9;
@@ -388,7 +405,7 @@ namespace CppCLR_WinformsProjekt {
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(665, 604);
+			this->label6->Location = System::Drawing::Point(661, 644);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(75, 13);
 			this->label6->TabIndex = 10;
@@ -397,7 +414,7 @@ namespace CppCLR_WinformsProjekt {
 			// label7
 			// 
 			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(899, 527);
+			this->label7->Location = System::Drawing::Point(929, 567);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(77, 13);
 			this->label7->TabIndex = 11;
@@ -407,7 +424,7 @@ namespace CppCLR_WinformsProjekt {
 			// label8
 			// 
 			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(665, 677);
+			this->label8->Location = System::Drawing::Point(661, 717);
 			this->label8->Name = L"label8";
 			this->label8->Size = System::Drawing::Size(115, 13);
 			this->label8->TabIndex = 12;
@@ -416,7 +433,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// trackBar4
 			// 
-			this->trackBar4->Location = System::Drawing::Point(668, 693);
+			this->trackBar4->Location = System::Drawing::Point(664, 733);
 			this->trackBar4->Maximum = 4095;
 			this->trackBar4->Name = L"trackBar4";
 			this->trackBar4->Size = System::Drawing::Size(121, 45);
@@ -425,7 +442,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(668, 553);
+			this->button1->Location = System::Drawing::Point(664, 593);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(94, 34);
 			this->button1->TabIndex = 14;
@@ -435,7 +452,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(777, 553);
+			this->button2->Location = System::Drawing::Point(773, 593);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(94, 34);
 			this->button2->TabIndex = 15;
@@ -445,7 +462,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(668, 629);
+			this->button3->Location = System::Drawing::Point(664, 669);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(94, 34);
 			this->button3->TabIndex = 16;
@@ -455,7 +472,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(777, 629);
+			this->button4->Location = System::Drawing::Point(773, 669);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(94, 34);
 			this->button4->TabIndex = 17;
@@ -465,7 +482,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button5
 			// 
-			this->button5->Location = System::Drawing::Point(902, 553);
+			this->button5->Location = System::Drawing::Point(932, 593);
 			this->button5->Name = L"button5";
 			this->button5->Size = System::Drawing::Size(94, 34);
 			this->button5->TabIndex = 18;
@@ -476,7 +493,7 @@ namespace CppCLR_WinformsProjekt {
 			// label9
 			// 
 			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(533, 527);
+			this->label9->Location = System::Drawing::Point(529, 567);
 			this->label9->Name = L"label9";
 			this->label9->Size = System::Drawing::Size(82, 13);
 			this->label9->TabIndex = 19;
@@ -485,7 +502,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button6
 			// 
-			this->button6->Location = System::Drawing::Point(523, 553);
+			this->button6->Location = System::Drawing::Point(519, 593);
 			this->button6->Name = L"button6";
 			this->button6->Size = System::Drawing::Size(126, 34);
 			this->button6->TabIndex = 20;
@@ -493,27 +510,9 @@ namespace CppCLR_WinformsProjekt {
 			this->button6->UseVisualStyleBackColor = true;
 			this->button6->Click += gcnew System::EventHandler(this, &Form1::button6_Click);
 			// 
-			// label10
-			// 
-			this->label10->AutoSize = true;
-			this->label10->Location = System::Drawing::Point(509, 604);
-			this->label10->Name = L"label10";
-			this->label10->Size = System::Drawing::Size(48, 13);
-			this->label10->TabIndex = 21;
-			this->label10->Text = L"IP Addr.:";
-			this->label10->Click += gcnew System::EventHandler(this, &Form1::label10_Click);
-			// 
-			// textBox2
-			// 
-			this->textBox2->Location = System::Drawing::Point(563, 601);
-			this->textBox2->Name = L"textBox2";
-			this->textBox2->Size = System::Drawing::Size(96, 20);
-			this->textBox2->TabIndex = 22;
-			this->textBox2->TextChanged += gcnew System::EventHandler(this, &Form1::textBox2_TextChanged);
-			// 
 			// button7
 			// 
-			this->button7->Location = System::Drawing::Point(523, 629);
+			this->button7->Location = System::Drawing::Point(519, 669);
 			this->button7->Name = L"button7";
 			this->button7->Size = System::Drawing::Size(126, 34);
 			this->button7->TabIndex = 23;
@@ -523,7 +522,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button8
 			// 
-			this->button8->Location = System::Drawing::Point(523, 677);
+			this->button8->Location = System::Drawing::Point(519, 717);
 			this->button8->Name = L"button8";
 			this->button8->Size = System::Drawing::Size(126, 34);
 			this->button8->TabIndex = 24;
@@ -534,7 +533,7 @@ namespace CppCLR_WinformsProjekt {
 			// radioButton1
 			// 
 			this->radioButton1->AutoSize = true;
-			this->radioButton1->Location = System::Drawing::Point(668, 764);
+			this->radioButton1->Location = System::Drawing::Point(697, 798);
 			this->radioButton1->Name = L"radioButton1";
 			this->radioButton1->Size = System::Drawing::Size(47, 17);
 			this->radioButton1->TabIndex = 25;
@@ -545,7 +544,7 @@ namespace CppCLR_WinformsProjekt {
 			// radioButton2
 			// 
 			this->radioButton2->AutoSize = true;
-			this->radioButton2->Location = System::Drawing::Point(667, 787);
+			this->radioButton2->Location = System::Drawing::Point(696, 821);
 			this->radioButton2->Name = L"radioButton2";
 			this->radioButton2->Size = System::Drawing::Size(39, 17);
 			this->radioButton2->TabIndex = 26;
@@ -556,7 +555,7 @@ namespace CppCLR_WinformsProjekt {
 			// label12
 			// 
 			this->label12->AutoSize = true;
-			this->label12->Location = System::Drawing::Point(964, 712);
+			this->label12->Location = System::Drawing::Point(994, 752);
 			this->label12->Name = L"label12";
 			this->label12->Size = System::Drawing::Size(132, 13);
 			this->label12->TabIndex = 28;
@@ -565,7 +564,7 @@ namespace CppCLR_WinformsProjekt {
 			// label13
 			// 
 			this->label13->AutoSize = true;
-			this->label13->Location = System::Drawing::Point(826, 712);
+			this->label13->Location = System::Drawing::Point(810, 733);
 			this->label13->Name = L"label13";
 			this->label13->Size = System::Drawing::Size(69, 13);
 			this->label13->TabIndex = 29;
@@ -574,7 +573,7 @@ namespace CppCLR_WinformsProjekt {
 			// radioButton3
 			// 
 			this->radioButton3->AutoSize = true;
-			this->radioButton3->Location = System::Drawing::Point(828, 763);
+			this->radioButton3->Location = System::Drawing::Point(812, 784);
 			this->radioButton3->Name = L"radioButton3";
 			this->radioButton3->Size = System::Drawing::Size(81, 17);
 			this->radioButton3->TabIndex = 31;
@@ -585,7 +584,7 @@ namespace CppCLR_WinformsProjekt {
 			// radioButton4
 			// 
 			this->radioButton4->AutoSize = true;
-			this->radioButton4->Location = System::Drawing::Point(829, 740);
+			this->radioButton4->Location = System::Drawing::Point(813, 761);
 			this->radioButton4->Name = L"radioButton4";
 			this->radioButton4->Size = System::Drawing::Size(78, 17);
 			this->radioButton4->TabIndex = 30;
@@ -603,6 +602,7 @@ namespace CppCLR_WinformsProjekt {
 			this->radioButton5->TabStop = true;
 			this->radioButton5->Text = L"Min. -Min. -Temp.";
 			this->radioButton5->UseVisualStyleBackColor = true;
+			this->radioButton5->CheckedChanged += gcnew System::EventHandler(this, &Form1::radioButton5_CheckedChanged);
 			// 
 			// radioButton6
 			// 
@@ -629,7 +629,7 @@ namespace CppCLR_WinformsProjekt {
 			// label14
 			// 
 			this->label14->AutoSize = true;
-			this->label14->Location = System::Drawing::Point(899, 608);
+			this->label14->Location = System::Drawing::Point(929, 648);
 			this->label14->Name = L"label14";
 			this->label14->Size = System::Drawing::Size(17, 13);
 			this->label14->TabIndex = 35;
@@ -638,7 +638,7 @@ namespace CppCLR_WinformsProjekt {
 			// label15
 			// 
 			this->label15->AutoSize = true;
-			this->label15->Location = System::Drawing::Point(1002, 607);
+			this->label15->Location = System::Drawing::Point(1032, 647);
 			this->label15->Name = L"label15";
 			this->label15->Size = System::Drawing::Size(17, 13);
 			this->label15->TabIndex = 36;
@@ -648,7 +648,7 @@ namespace CppCLR_WinformsProjekt {
 			// label16
 			// 
 			this->label16->AutoSize = true;
-			this->label16->Location = System::Drawing::Point(899, 636);
+			this->label16->Location = System::Drawing::Point(929, 676);
 			this->label16->Name = L"label16";
 			this->label16->Size = System::Drawing::Size(38, 13);
 			this->label16->TabIndex = 37;
@@ -657,7 +657,7 @@ namespace CppCLR_WinformsProjekt {
 			// label17
 			// 
 			this->label17->AutoSize = true;
-			this->label17->Location = System::Drawing::Point(1002, 635);
+			this->label17->Location = System::Drawing::Point(1032, 675);
 			this->label17->Name = L"label17";
 			this->label17->Size = System::Drawing::Size(41, 13);
 			this->label17->TabIndex = 38;
@@ -665,7 +665,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// textBox3
 			// 
-			this->textBox3->Location = System::Drawing::Point(949, 605);
+			this->textBox3->Location = System::Drawing::Point(979, 645);
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->Size = System::Drawing::Size(47, 20);
 			this->textBox3->TabIndex = 39;
@@ -674,7 +674,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// textBox4
 			// 
-			this->textBox4->Location = System::Drawing::Point(949, 633);
+			this->textBox4->Location = System::Drawing::Point(979, 673);
 			this->textBox4->Name = L"textBox4";
 			this->textBox4->Size = System::Drawing::Size(47, 20);
 			this->textBox4->TabIndex = 40;
@@ -683,7 +683,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// textBox5
 			// 
-			this->textBox5->Location = System::Drawing::Point(1049, 604);
+			this->textBox5->Location = System::Drawing::Point(1079, 644);
 			this->textBox5->Name = L"textBox5";
 			this->textBox5->Size = System::Drawing::Size(47, 20);
 			this->textBox5->TabIndex = 41;
@@ -692,7 +692,7 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// textBox6
 			// 
-			this->textBox6->Location = System::Drawing::Point(1049, 633);
+			this->textBox6->Location = System::Drawing::Point(1079, 673);
 			this->textBox6->Name = L"textBox6";
 			this->textBox6->Size = System::Drawing::Size(47, 20);
 			this->textBox6->TabIndex = 42;
@@ -701,17 +701,18 @@ namespace CppCLR_WinformsProjekt {
 			// 
 			// button9
 			// 
-			this->button9->Location = System::Drawing::Point(523, 778);
+			this->button9->Location = System::Drawing::Point(552, 812);
 			this->button9->Name = L"button9";
 			this->button9->Size = System::Drawing::Size(126, 34);
 			this->button9->TabIndex = 43;
 			this->button9->Text = L"Close Device";
 			this->button9->UseVisualStyleBackColor = true;
+			this->button9->Click += gcnew System::EventHandler(this, &Form1::button9_Click);
 			// 
 			// label18
 			// 
 			this->label18->AutoSize = true;
-			this->label18->Location = System::Drawing::Point(572, 484);
+			this->label18->Location = System::Drawing::Point(671, 517);
 			this->label18->Name = L"label18";
 			this->label18->Size = System::Drawing::Size(37, 13);
 			this->label18->TabIndex = 44;
@@ -720,7 +721,7 @@ namespace CppCLR_WinformsProjekt {
 			// label19
 			// 
 			this->label19->AutoSize = true;
-			this->label19->Location = System::Drawing::Point(624, 484);
+			this->label19->Location = System::Drawing::Point(723, 517);
 			this->label19->Name = L"label19";
 			this->label19->Size = System::Drawing::Size(17, 13);
 			this->label19->TabIndex = 45;
@@ -729,7 +730,7 @@ namespace CppCLR_WinformsProjekt {
 			// label20
 			// 
 			this->label20->AutoSize = true;
-			this->label20->Location = System::Drawing::Point(665, 484);
+			this->label20->Location = System::Drawing::Point(764, 517);
 			this->label20->Name = L"label20";
 			this->label20->Size = System::Drawing::Size(17, 13);
 			this->label20->TabIndex = 46;
@@ -738,7 +739,7 @@ namespace CppCLR_WinformsProjekt {
 			// label21
 			// 
 			this->label21->AutoSize = true;
-			this->label21->Location = System::Drawing::Point(647, 484);
+			this->label21->Location = System::Drawing::Point(746, 517);
 			this->label21->Name = L"label21";
 			this->label21->Size = System::Drawing::Size(0, 13);
 			this->label21->TabIndex = 47;
@@ -746,7 +747,7 @@ namespace CppCLR_WinformsProjekt {
 			// label22
 			// 
 			this->label22->AutoSize = true;
-			this->label22->Location = System::Drawing::Point(688, 484);
+			this->label22->Location = System::Drawing::Point(787, 517);
 			this->label22->Name = L"label22";
 			this->label22->Size = System::Drawing::Size(0, 13);
 			this->label22->TabIndex = 48;
@@ -754,7 +755,7 @@ namespace CppCLR_WinformsProjekt {
 			// label23
 			// 
 			this->label23->AutoSize = true;
-			this->label23->Location = System::Drawing::Point(725, 484);
+			this->label23->Location = System::Drawing::Point(824, 517);
 			this->label23->Name = L"label23";
 			this->label23->Size = System::Drawing::Size(89, 13);
 			this->label23->TabIndex = 49;
@@ -763,7 +764,7 @@ namespace CppCLR_WinformsProjekt {
 			// label24
 			// 
 			this->label24->AutoSize = true;
-			this->label24->Location = System::Drawing::Point(861, 484);
+			this->label24->Location = System::Drawing::Point(960, 517);
 			this->label24->Name = L"label24";
 			this->label24->Size = System::Drawing::Size(89, 13);
 			this->label24->TabIndex = 50;
@@ -772,7 +773,7 @@ namespace CppCLR_WinformsProjekt {
 			// label25
 			// 
 			this->label25->AutoSize = true;
-			this->label25->Location = System::Drawing::Point(814, 484);
+			this->label25->Location = System::Drawing::Point(913, 517);
 			this->label25->Name = L"label25";
 			this->label25->Size = System::Drawing::Size(0, 13);
 			this->label25->TabIndex = 51;
@@ -780,7 +781,7 @@ namespace CppCLR_WinformsProjekt {
 			// label26
 			// 
 			this->label26->AutoSize = true;
-			this->label26->Location = System::Drawing::Point(956, 484);
+			this->label26->Location = System::Drawing::Point(1055, 517);
 			this->label26->Name = L"label26";
 			this->label26->Size = System::Drawing::Size(0, 13);
 			this->label26->TabIndex = 52;
@@ -798,11 +799,12 @@ namespace CppCLR_WinformsProjekt {
 			// pictureBox2
 			// 
 			this->pictureBox2->BackColor = System::Drawing::SystemColors::Window;
-			this->pictureBox2->Location = System::Drawing::Point(668, 44);
+			this->pictureBox2->Location = System::Drawing::Point(664, 29);
 			this->pictureBox2->Name = L"pictureBox2";
-			this->pictureBox2->Size = System::Drawing::Size(573, 426);
+			this->pictureBox2->Size = System::Drawing::Size(658, 485);
 			this->pictureBox2->TabIndex = 54;
 			this->pictureBox2->TabStop = false;
+			this->pictureBox2->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::pictureBox2_MouseMove);
 			// 
 			// groupBox1
 			// 
@@ -810,15 +812,16 @@ namespace CppCLR_WinformsProjekt {
 			this->groupBox1->Controls->Add(this->radioButton6);
 			this->groupBox1->Controls->Add(this->radioButton5);
 			this->groupBox1->Controls->Add(this->radioButton7);
-			this->groupBox1->Location = System::Drawing::Point(959, 728);
+			this->groupBox1->Location = System::Drawing::Point(989, 768);
 			this->groupBox1->Name = L"groupBox1";
 			this->groupBox1->Size = System::Drawing::Size(200, 100);
 			this->groupBox1->TabIndex = 55;
 			this->groupBox1->TabStop = false;
+			this->groupBox1->Enter += gcnew System::EventHandler(this, &Form1::groupBox1_Enter);
 			// 
 			// textBox7
 			// 
-			this->textBox7->Location = System::Drawing::Point(1038, 561);
+			this->textBox7->Location = System::Drawing::Point(1068, 601);
 			this->textBox7->Name = L"textBox7";
 			this->textBox7->Size = System::Drawing::Size(47, 20);
 			this->textBox7->TabIndex = 56;
@@ -827,18 +830,84 @@ namespace CppCLR_WinformsProjekt {
 			// label27
 			// 
 			this->label27->AutoSize = true;
-			this->label27->Location = System::Drawing::Point(1019, 529);
+			this->label27->Location = System::Drawing::Point(1049, 569);
 			this->label27->Name = L"label27";
 			this->label27->Size = System::Drawing::Size(62, 13);
 			this->label27->TabIndex = 57;
 			this->label27->Text = L"Frame Rate";
 			this->label27->Click += gcnew System::EventHandler(this, &Form1::label27_Click);
 			// 
+			// label10
+			// 
+			this->label10->AutoSize = true;
+			this->label10->Location = System::Drawing::Point(496, 593);
+			this->label10->Name = L"label10";
+			this->label10->Size = System::Drawing::Size(0, 13);
+			this->label10->TabIndex = 58;
+			// 
+			// label11
+			// 
+			this->label11->AutoSize = true;
+			this->label11->Location = System::Drawing::Point(496, 648);
+			this->label11->Name = L"label11";
+			this->label11->Size = System::Drawing::Size(0, 13);
+			this->label11->TabIndex = 59;
+			// 
+			// label28
+			// 
+			this->label28->AutoSize = true;
+			this->label28->Location = System::Drawing::Point(372, 784);
+			this->label28->Name = L"label28";
+			this->label28->Size = System::Drawing::Size(71, 13);
+			this->label28->TabIndex = 60;
+			this->label28->Text = L"Denoise Filter";
+			// 
+			// label29
+			// 
+			this->label29->AutoSize = true;
+			this->label29->Location = System::Drawing::Point(486, 817);
+			this->label29->Name = L"label29";
+			this->label29->Size = System::Drawing::Size(0, 13);
+			this->label29->TabIndex = 61;
+			// 
+			// label30
+			// 
+			this->label30->AutoSize = true;
+			this->label30->Location = System::Drawing::Point(788, 733);
+			this->label30->Name = L"label30";
+			this->label30->Size = System::Drawing::Size(0, 13);
+			this->label30->TabIndex = 62;
+			// 
+			// label31
+			// 
+			this->label31->AutoSize = true;
+			this->label31->Location = System::Drawing::Point(1100, 517);
+			this->label31->Name = L"label31";
+			this->label31->Size = System::Drawing::Size(59, 13);
+			this->label31->TabIndex = 63;
+			this->label31->Text = L"High Byte: ";
+			// 
+			// label32
+			// 
+			this->label32->AutoSize = true;
+			this->label32->Location = System::Drawing::Point(1202, 517);
+			this->label32->Name = L"label32";
+			this->label32->Size = System::Drawing::Size(57, 13);
+			this->label32->TabIndex = 64;
+			this->label32->Text = L"Low Byte: ";
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(1384, 874);
+			this->ClientSize = System::Drawing::Size(1430, 874);
+			this->Controls->Add(this->label32);
+			this->Controls->Add(this->label31);
+			this->Controls->Add(this->label30);
+			this->Controls->Add(this->label29);
+			this->Controls->Add(this->label28);
+			this->Controls->Add(this->label11);
+			this->Controls->Add(this->label10);
 			this->Controls->Add(this->label27);
 			this->Controls->Add(this->textBox7);
 			this->Controls->Add(this->groupBox1);
@@ -870,8 +939,6 @@ namespace CppCLR_WinformsProjekt {
 			this->Controls->Add(this->radioButton1);
 			this->Controls->Add(this->button8);
 			this->Controls->Add(this->button7);
-			this->Controls->Add(this->textBox2);
-			this->Controls->Add(this->label10);
 			this->Controls->Add(this->button6);
 			this->Controls->Add(this->label9);
 			this->Controls->Add(this->button5);
@@ -895,6 +962,7 @@ namespace CppCLR_WinformsProjekt {
 			this->Controls->Add(this->textBox1);
 			this->Name = L"Form1";
 			this->Text = L"Pyrocam...";
+			this->Load += gcnew System::EventHandler(this, &Form1::Form1_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar3))->EndInit();
@@ -943,7 +1011,7 @@ namespace CppCLR_WinformsProjekt {
 
 		
 
-	
+	//cv::imwrite
 
 		}
 private: System::Void textBox3_TextChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -976,16 +1044,18 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 		FreeLibrary(hDLL);
 	}
 	
-
-
+	int ThresValue = trackBar4->Value;
 	
+	error = pSetBacklightSuppressionThreshold(trackBar4->Value);  // GetBacklightSuppressionThreshold(threValue);
+
+	if (error == OK)
+		textBox1->AppendText("Backlight Suppression Threshold Value = " + trackBar4->Value.ToString());
+	else {
+		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
+	}
 
 	Thread^ newThread = gcnew Thread(gcnew ThreadStart(this, &Form1::image_Capture));
 	newThread->Start();
-	//Thread^ t = gcnew Thread(gcnew ThreadStart(obj->image_Capture));
-	//t->Start();
-	
-
 
 
 }
@@ -1000,13 +1070,11 @@ void Form1::image_Capture() {
 		unsigned char *pTemperatureImage = new unsigned char[Width * Height * 2];
 		unsigned char *pGreyImage = new unsigned char[Width * Height * 2];
 
-
 		unsigned short *pImageData = pGetTemperaturImage();
 		if (pImageData) {
 			{
 				memcpy(pTemperatureImage, pImageData, (Width * Height * sizeof(unsigned short)));
 				memcpy(pGreyImage, pImageData, (Width * Height * sizeof(unsigned short)));
-
 
 				std::wstring FilePathTemp = L"C:\\MyFolder\\tempimg";
 				std::wstring FilePathGrey = L"C:\\MyFolder\\greyimg";
@@ -1037,11 +1105,14 @@ private: System::Void button3_Click(System::Object^  sender, System::EventArgs^ 
 	fileDialog->Filter = "dat files|*.dat";
 	fileDialog->Title = "Select Pyrocam File";
 
+	
+
 	msclr::interop::marshal_context oMC;
 	if (fileDialog->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 		error = pLoadCalibration(oMC.marshal_as<const char*>(fileDialog->FileName));
 	}
 	
+	textBox1->AppendText("Calibration File: " + fileDialog->FileName);
 	
 }
 private: System::Void textBox5_TextChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1058,15 +1129,6 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 private: System::Void button7_Click(System::Object^  sender, System::EventArgs^  e) {
 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
-	int ThresValue = trackBar4->Value;
-	//int* threValue = &ThresValue;
-	error = pSetBacklightSuppressionThreshold(trackBar4->Value);  // GetBacklightSuppressionThreshold(threValue);
-
-	if (error == OK)
-		textBox1->AppendText = "Backlight Suppression Threshold Value = " + trackBar4->Value.ToString();
-	else {
-		textBox1->AppendText = "FAIL - Error Code: " + System::Convert::ToString(error);
-	}
 }
 private: System::Void button8_Click(System::Object^  sender, System::EventArgs^  e) {
 }
@@ -1074,10 +1136,79 @@ private: System::Void label27_Click(System::Object^  sender, System::EventArgs^ 
 }
 private: System::Void label8_Click(System::Object^  sender, System::EventArgs^  e) {
 }
+
+private: System::Void button9_Click(System::Object^  sender, System::EventArgs^  e) {
+	pCloseDevice();
+}
+private: System::Void groupBox1_Enter(System::Object^  sender, System::EventArgs^  e) {
+}
+private: System::Void radioButton5_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+}
+
+
+
+
+private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
+	label10->Text = trackBar2->Value.ToString();
+	label11->Text = trackBar3->Value.ToString();
+	label29->Text = trackBar1->Value.ToString();
+	label30->Text = trackBar4->Value.ToString();
+
+	pictureBox2->Image = Image::FromFile("C:\\MyFolder\\tempimg1.bmp");
+
+	ifstream input(L"C:\\MyFolder\\tempimg1.bmp", ios::binary);
+	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+	
+	this->LengthOfArray = buffer.size();
+	this->bildbyte = new char[this->LengthOfArray];
+	std::copy(buffer.begin(), buffer.end(), this->bildbyte);
+
+}
+
+private: System::Void trackBar3_Scroll(System::Object^  sender, System::EventArgs^  e) {
+	label11->Text = trackBar3->Value.ToString();
+}
+
+private: System::Void trackBar2_Scroll(System::Object^  sender, System::EventArgs^  e) {
+	label10->Text = trackBar2->Value.ToString();
+}
+
+private: System::Void trackBar1_Scroll(System::Object^  sender, System::EventArgs^  e) {
+	label29->Text = trackBar1->Value.ToString();
+}
 private: System::Void trackBar4_Scroll(System::Object^  sender, System::EventArgs^  e) {
-	System::String^ BSValue = trackBar4->Value.ToString();
-	System::String^ BSText = "Backlight Suppression: " + BSValue;
-	label8->Text = BSText;
+	label30->Text = trackBar4->Value.ToString();
+}
+
+
+private: System::Void pictureBox2_MouseMove(System::Object^  sender, System::Windows::Forms::MouseEventArgs^  e) {
+	int mouseX = e->X;
+	int mouseY = e->Y;
+
+	if (pictureBox2->Image != nullptr) {
+
+		unsigned char lowbyte = bildbyte[54 + mouseX * mouseY * 2 + mouseX * 2];
+		unsigned char highbyte = bildbyte[54 + mouseX * mouseY * 2 + mouseX * 2 + 1];
+
+		int shortemp = lowbyte + 256 * highbyte;
+		
+		String^ temp = System::Convert::ToString(shortemp);
+		label31->Text = "High Byte: " + System::Convert::ToString(highbyte);
+		label32->Text = "Low Byte: " + System::Convert::ToString(lowbyte);
+
+		/*String^ position = "X: " + System::Convert::ToString(mouseX) + " Y: " + System::Convert::ToString(mouseY) + " Temperatur: " + temp + "°C" + " Lowbyte = "
+			+ System::Convert::ToString(lowbyte) + " Highbyte = " + System::Convert::ToString(highbyte);*/
+		
+		
+		label24->Text = "Temperaturwert [°C]: " + temp;
+		label19->Text = "X: " + mouseX.ToString();
+		label20->Text = "Y: " + mouseY.ToString();
+		
+	}
+	else {
+		label24->Text = "Temperaturwert [°C]: ";
+	}
+
 }
 };
 }
