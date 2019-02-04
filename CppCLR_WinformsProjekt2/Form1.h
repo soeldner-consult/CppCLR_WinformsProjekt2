@@ -20,11 +20,13 @@
 #include <iostream>
 #include <fstream>
 #include <vector>
+#include <stdint.h>
 
 
 
 //#include <opencv2/open>
 #include <opencv2/opencv.hpp>
+
 
 
 //---- Library Info ----
@@ -117,7 +119,7 @@ namespace CppCLR_WinformsProjekt {
 	private: System::Windows::Forms::Label^  label28;
 	private: System::Windows::Forms::Label^  label29;
 	private: System::Windows::Forms::Label^  label30;
-	public: char* bildbyte;
+	public: unsigned char* bildbyte;
 	private: System::Windows::Forms::Label^  label31;
 	public:
 	private: System::Windows::Forms::Label^  label32;
@@ -793,12 +795,11 @@ namespace CppCLR_WinformsProjekt {
 			// pictureBox1
 			// 
 			this->pictureBox1->BackColor = System::Drawing::SystemColors::Window;
-			this->pictureBox1->Location = System::Drawing::Point(32, 44);
+			this->pictureBox1->Location = System::Drawing::Point(12, 29);
 			this->pictureBox1->Name = L"pictureBox1";
-			this->pictureBox1->Size = System::Drawing::Size(573, 426);
+			this->pictureBox1->Size = System::Drawing::Size(620, 485);
 			this->pictureBox1->TabIndex = 53;
 			this->pictureBox1->TabStop = false;
-			this->pictureBox1->Click += gcnew System::EventHandler(this, &Form1::pictureBox1_Click);
 			// 
 			// pictureBox2
 			// 
@@ -995,8 +996,7 @@ namespace CppCLR_WinformsProjekt {
 	}
 	private: System::Void label15_Click(System::Object^  sender, System::EventArgs^  e) {
 	}
-	private: System::Void pictureBox1_Click(System::Object^  sender, System::EventArgs^  e) {
-	}
+
 	private: System::Void button6_Click(System::Object^  sender, System::EventArgs^  e) {
 		
 		if (pGetLibraryVersion && pInitDeviceGUI && pCloseDevice && pStartStreaming && pStopStreaming && pLoadCalibration && pGetCalibrationInfo
@@ -1158,15 +1158,61 @@ private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e)
 	label29->Text = trackBar1->Value.ToString();
 	label30->Text = trackBar4->Value.ToString();
 
+	cv::Mat tempimg = cv::imread("C:\\MyFolder\\tempimg1.bmp");
+	//textBox1->Text = System::Convert::ToString(tempimg.at<uint16_t>(250, 250));
+	ushort val = tempimg.at<ushort>(400, 400);
+	textBox1->Text = System::Convert::ToString(val);
+
+
+
+	//for (int i = 0; i < tempimg.rows; i++) {
+	//	for (int j = 0; j < tempimg.cols; j++) {
+	//		tempimg.at<uint16_t>(i, j) -= 600;
+	//	}
+	//}
+
+	/*cv::imwrite("C:\\temp\\myimgtemp.bmp", tempimg);*/
+
 	pictureBox2->Image = Image::FromFile("C:\\MyFolder\\tempimg1.bmp");
+	
+	
+	//cv::Mat img = cv::imread("C:\\MyFolder\\tempimg2.bmp");
+	//HBITMAP hBit = CreateBitmap(img.cols, img.rows, 1, 32, img.data);
+	//Bitmap^ bitmap = Bitmap::FromHbitmap((IntPtr)hBit);
+	//pictureBox1->Image = bitmap;
+	
+	
+	cv::Mat img = cv::imread("C:\\MyFolder\\greyimg1.bmp", cv::IMREAD_GRAYSCALE);
+	//cv::Mat im_color;
+	//cv::applyColorMap(img, im_color, cv::COLORMAP_HOT);
+	/*cv::normalize(img, im_color, 600, 2500, cv::NORM_MINMAX,CV_16FC1);
+	cv::Mat invert;
+	cv::bitwise_not(im_color, invert);*/
+
+	cv::imwrite("C:\\temp\\myimg.bmp", img);
+
+	//Bitmap^ bitmap = ConvertMatToManagedBitmap(img);
+	//bitmap->Save("C:\\temp\\mybitmap.bmp", System::Drawing::Imaging::ImageFormat::Bmp);
+	
+	pictureBox1->Image = Image::FromFile("C:\\temp\\myimg.bmp");
+	
+
 
 	ifstream input(L"C:\\MyFolder\\tempimg1.bmp", ios::binary);
 	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
 	
 	this->LengthOfArray = buffer.size();
-	this->bildbyte = new char[this->LengthOfArray];
-	std::copy(buffer.begin(), buffer.end(), this->bildbyte);
+	
+	
+	
+	
 
+
+	//bildbyte array is for storing the image byte values in the application
+	this->bildbyte = new unsigned char[this->LengthOfArray];
+	std::copy(buffer.begin(), buffer.end(), this->bildbyte);
+	
+	
 }
 
 private: System::Void trackBar3_Scroll(System::Object^  sender, System::EventArgs^  e) {
@@ -1214,5 +1260,14 @@ private: System::Void pictureBox2_MouseMove(System::Object^  sender, System::Win
 	}
 
 }
+
+
+	/*Bitmap^ ConvertMatToManagedBitmap(cv::Mat matToConvert) {
+			
+		Bitmap^ bitmap = gcnew Bitmap(matToConvert.rows, matToConvert.cols, 4 * matToConvert.rows, System::Drawing::Imaging::PixelFormat::Format16bppGrayScale, IntPtr(matToConvert.data));
+		return bitmap;
+	}
+*/
+
 };
 }

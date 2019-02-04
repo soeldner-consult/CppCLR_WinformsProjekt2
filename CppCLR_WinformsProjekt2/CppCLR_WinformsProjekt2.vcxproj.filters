@@ -63,4 +63,9 @@
       <Filter>Ressourcendateien</Filter>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <Library Include="..\..\..\..\opencv\build\x64\vc14\lib\opencv_world400d.lib">
+      <Filter>Ressourcendateien</Filter>
+    </Library>
+  </ItemGroup>
 </Project>
