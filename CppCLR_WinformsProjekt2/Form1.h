@@ -22,6 +22,9 @@
 #include <vector>
 #include <stdint.h>
 
+#include <locale>
+#include <codecvt>
+#include <vfw.h>
 
 
 //#include <opencv2/open>
@@ -60,6 +63,8 @@ typedef int(__cdecl * TSetBacklightSuppressionClampMode)(int Mode);
 typedef int(__cdecl * TGetBacklightSuppressionClampMode)(int *pMode);
 typedef int(__cdecl * TSetBacklightSuppression)(int Mode);
 
+//---- Denoising ----
+typedef int(__cdecl * TSetDenoising)(double Value);
 
 namespace CppCLR_WinformsProjekt {
 
@@ -110,6 +115,7 @@ namespace CppCLR_WinformsProjekt {
 		TSetBacklightSuppressionClampMode pSetBacklightSuppressionClampMode;
 		TGetBacklightSuppressionClampMode pGetBacklightSuppressionClampMode;
 
+		TSetDenoising pSetDenoising;
 
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::TextBox^  textBox7;
@@ -123,6 +129,7 @@ namespace CppCLR_WinformsProjekt {
 	private: System::Windows::Forms::Label^  label31;
 	public:
 	private: System::Windows::Forms::Label^  label32;
+	private: System::Windows::Forms::Label^  DenoiseValue;
 	public: long LengthOfArray;
 
 
@@ -160,6 +167,8 @@ namespace CppCLR_WinformsProjekt {
 			this->pSetBacklightSuppressionClampMode = (TSetBacklightSuppressionClampMode)GetProcAddress(hDLL, "Set Backlight Suppression Clamp Mode");
 			this->pSetBacklightSuppression = (TSetBacklightSuppression)GetProcAddress(hDLL, "Set Backlight Suppression");
 
+			this->pSetDenoising = (TSetDenoising)GetProcAddress(hDLL, "Set Denoising");
+
 
 		}
 
@@ -179,7 +188,8 @@ namespace CppCLR_WinformsProjekt {
 	private: System::Windows::Forms::Label^  label1;
 	private: System::Windows::Forms::Splitter^  splitter1;
 	private: System::Windows::Forms::Label^  label2;
-	private: System::Windows::Forms::TrackBar^  trackBar1;
+private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
+
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::Label^  label4;
 	private: System::Windows::Forms::TrackBar^  trackBar2;
@@ -252,7 +262,7 @@ namespace CppCLR_WinformsProjekt {
 			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->splitter1 = (gcnew System::Windows::Forms::Splitter());
 			this->label2 = (gcnew System::Windows::Forms::Label());
-			this->trackBar1 = (gcnew System::Windows::Forms::TrackBar());
+			this->DenoiseTrackbar = (gcnew System::Windows::Forms::TrackBar());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
 			this->trackBar2 = (gcnew System::Windows::Forms::TrackBar());
@@ -310,7 +320,8 @@ namespace CppCLR_WinformsProjekt {
 			this->label30 = (gcnew System::Windows::Forms::Label());
 			this->label31 = (gcnew System::Windows::Forms::Label());
 			this->label32 = (gcnew System::Windows::Forms::Label());
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->BeginInit();
+			this->DenoiseValue = (gcnew System::Windows::Forms::Label());
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DenoiseTrackbar))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar3))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar4))->BeginInit();
@@ -354,15 +365,15 @@ namespace CppCLR_WinformsProjekt {
 			this->label2->Size = System::Drawing::Size(0, 13);
 			this->label2->TabIndex = 3;
 			// 
-			// trackBar1
+			// DenoiseTrackbar
 			// 
-			this->trackBar1->Location = System::Drawing::Point(343, 816);
-			this->trackBar1->Maximum = 95;
-			this->trackBar1->Name = L"trackBar1";
-			this->trackBar1->Size = System::Drawing::Size(121, 45);
-			this->trackBar1->TabIndex = 4;
-			this->trackBar1->TickFrequency = 5;
-			this->trackBar1->Value = 85;
+			this->DenoiseTrackbar->Location = System::Drawing::Point(365, 812);
+			this->DenoiseTrackbar->Maximum = 95;
+			this->DenoiseTrackbar->Name = L"DenoiseTrackbar";
+			this->DenoiseTrackbar->Size = System::Drawing::Size(121, 45);
+			this->DenoiseTrackbar->TabIndex = 4;
+			this->DenoiseTrackbar->TickFrequency = 5;
+			this->DenoiseTrackbar->Value = 85;
 			// 
 			// label3
 			// 
@@ -861,11 +872,11 @@ namespace CppCLR_WinformsProjekt {
 			// label28
 			// 
 			this->label28->AutoSize = true;
-			this->label28->Location = System::Drawing::Point(372, 784);
+			this->label28->Location = System::Drawing::Point(366, 788);
 			this->label28->Name = L"label28";
-			this->label28->Size = System::Drawing::Size(71, 13);
+			this->label28->Size = System::Drawing::Size(127, 13);
 			this->label28->TabIndex = 60;
-			this->label28->Text = L"Denoise Filter";
+			this->label28->Text = L"Denoise Filter (85 default)";
 			// 
 			// label29
 			// 
@@ -901,11 +912,20 @@ namespace CppCLR_WinformsProjekt {
 			this->label32->TabIndex = 64;
 			this->label32->Text = L"Low Byte: ";
 			// 
+			// DenoiseValue
+			// 
+			this->DenoiseValue->AutoSize = true;
+			this->DenoiseValue->Location = System::Drawing::Point(486, 817);
+			this->DenoiseValue->Name = L"DenoiseValue";
+			this->DenoiseValue->Size = System::Drawing::Size(0, 13);
+			this->DenoiseValue->TabIndex = 65;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1430, 874);
+			this->Controls->Add(this->DenoiseValue);
 			this->Controls->Add(this->label32);
 			this->Controls->Add(this->label31);
 			this->Controls->Add(this->label30);
@@ -960,7 +980,7 @@ namespace CppCLR_WinformsProjekt {
 			this->Controls->Add(this->trackBar2);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->label3);
-			this->Controls->Add(this->trackBar1);
+			this->Controls->Add(this->DenoiseTrackbar);
 			this->Controls->Add(this->label2);
 			this->Controls->Add(this->splitter1);
 			this->Controls->Add(this->label1);
@@ -968,7 +988,7 @@ namespace CppCLR_WinformsProjekt {
 			this->Name = L"Form1";
 			this->Text = L"Pyrocam...";
 			this->Load += gcnew System::EventHandler(this, &Form1::Form1_Load);
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar1))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DenoiseTrackbar))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar2))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar3))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar4))->EndInit();
@@ -1050,17 +1070,23 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 	
 	int ThresValue = trackBar4->Value;
 	
-	error = pSetBacklightSuppressionThreshold(trackBar4->Value);  // GetBacklightSuppressionThreshold(threValue);
+	//error = pSetBacklightSuppressionThreshold(trackBar4->Value);  // GetBacklightSuppressionThreshold(threValue);
 
+	//if (error == OK)
+	//	textBox1->AppendText("Backlight Suppression Threshold Value = " + trackBar4->Value.ToString());
+	//else {
+	//	textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
+	//}
+	
+	/*error = pSetDenoising(double(DenoiseTrackbar->Value) / 100);
 	if (error == OK)
-		textBox1->AppendText("Backlight Suppression Threshold Value = " + trackBar4->Value.ToString());
+		textBox1->AppendText("Denoise Value = " + (double(DenoiseTrackbar->Value)/100).ToString());
 	else {
 		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
-	}
+	}*/
 
 	Thread^ newThread = gcnew Thread(gcnew ThreadStart(this, &Form1::image_Capture));
 	newThread->Start();
-
 
 }
 
@@ -1073,6 +1099,8 @@ void Form1::image_Capture() {
 		std::wstring count = std::to_wstring(counter);
 		unsigned char *pTemperatureImage = new unsigned char[Width * Height * 2];
 		unsigned char *pGreyImage = new unsigned char[Width * Height * 2];
+		String^ framestring = textBox7->Text;
+		uint framerate = uint::Parse(framestring);
 
 		unsigned short *pImageData = pGetTemperaturImage();
 		if (pImageData) {
@@ -1093,10 +1121,22 @@ void Form1::image_Capture() {
 				delete[] pGreyImage;
 				delete[] pTemperatureImage;
 				counter++;
-				Sleep(200);
 
+				if (counter % 10 == 0) {
+					std::string stdFileNameTemp = string(FileNameTemp.begin(), FileNameTemp.end());
+					String^ managedFileNameTemp = gcnew String(stdFileNameTemp.c_str());
+					pictureBox2->Image = Image::FromFile(managedFileNameTemp);
+					
+					
+					
+					cv::Mat img = cv::imread(string(FileNameGrey.begin(),FileNameGrey.end()), cv::IMREAD_GRAYSCALE);
+					cv::imwrite("C:\\temp\\myimg.bmp", img);
+
+					pictureBox1->Image = Image::FromFile("C:\\temp\\myimg.bmp");
+				}
+
+				Sleep(100);
 			}
-
 		}
 
 	}
@@ -1127,7 +1167,7 @@ private: System::Void textBox6_TextChanged(System::Object^  sender, System::Even
 }
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 	streaming = false;
-	pCloseDevice();
+	error = pCloseDevice();
 	textBox1->AppendText("Stopped Streaming");
 }
 private: System::Void button7_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1143,27 +1183,24 @@ private: System::Void label8_Click(System::Object^  sender, System::EventArgs^  
 
 private: System::Void button9_Click(System::Object^  sender, System::EventArgs^  e) {
 	pCloseDevice();
+	FreeLibrary(hDLL);
 }
 private: System::Void groupBox1_Enter(System::Object^  sender, System::EventArgs^  e) {
 }
 private: System::Void radioButton5_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 }
 
-
-
-
 private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
 	label10->Text = trackBar2->Value.ToString();
 	label11->Text = trackBar3->Value.ToString();
-	label29->Text = trackBar1->Value.ToString();
+	label29->Text = DenoiseTrackbar->Value.ToString();
 	label30->Text = trackBar4->Value.ToString();
+
 
 	cv::Mat tempimg = cv::imread("C:\\MyFolder\\tempimg1.bmp");
 	//textBox1->Text = System::Convert::ToString(tempimg.at<uint16_t>(250, 250));
-	ushort val = tempimg.at<ushort>(400, 400);
+	uchar val = tempimg.at<uchar>(400, 400);
 	textBox1->Text = System::Convert::ToString(val);
-
-
 
 	//for (int i = 0; i < tempimg.rows; i++) {
 	//	for (int j = 0; j < tempimg.cols; j++) {
@@ -1180,8 +1217,7 @@ private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e)
 	//HBITMAP hBit = CreateBitmap(img.cols, img.rows, 1, 32, img.data);
 	//Bitmap^ bitmap = Bitmap::FromHbitmap((IntPtr)hBit);
 	//pictureBox1->Image = bitmap;
-	
-	
+
 	cv::Mat img = cv::imread("C:\\MyFolder\\greyimg1.bmp", cv::IMREAD_GRAYSCALE);
 	//cv::Mat im_color;
 	//cv::applyColorMap(img, im_color, cv::COLORMAP_HOT);
@@ -1196,23 +1232,14 @@ private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e)
 	
 	pictureBox1->Image = Image::FromFile("C:\\temp\\myimg.bmp");
 	
-
-
 	ifstream input(L"C:\\MyFolder\\tempimg1.bmp", ios::binary);
 	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
 	
 	this->LengthOfArray = buffer.size();
 	
-	
-	
-	
-
-
 	//bildbyte array is for storing the image byte values in the application
 	this->bildbyte = new unsigned char[this->LengthOfArray];
 	std::copy(buffer.begin(), buffer.end(), this->bildbyte);
-	
-	
 }
 
 private: System::Void trackBar3_Scroll(System::Object^  sender, System::EventArgs^  e) {
@@ -1223,8 +1250,8 @@ private: System::Void trackBar2_Scroll(System::Object^  sender, System::EventArg
 	label10->Text = trackBar2->Value.ToString();
 }
 
-private: System::Void trackBar1_Scroll(System::Object^  sender, System::EventArgs^  e) {
-	label29->Text = trackBar1->Value.ToString();
+private: System::Void DenoiseTrackbar_Scroll(System::Object^  sender, System::EventArgs^  e) {
+	label29->Text = DenoiseTrackbar->Value.ToString();
 }
 private: System::Void trackBar4_Scroll(System::Object^  sender, System::EventArgs^  e) {
 	label30->Text = trackBar4->Value.ToString();
