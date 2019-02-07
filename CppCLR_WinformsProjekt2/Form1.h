@@ -25,7 +25,7 @@
 #include <locale>
 #include <codecvt>
 #include <vfw.h>
-
+#include <algorithm>
 
 //#include <opencv2/open>
 #include <opencv2/opencv.hpp>
@@ -130,6 +130,7 @@ namespace CppCLR_WinformsProjekt {
 	public:
 	private: System::Windows::Forms::Label^  label32;
 	private: System::Windows::Forms::Label^  DenoiseValue;
+	private: System::Windows::Forms::Button^  videoButton;
 	public: long LengthOfArray;
 
 
@@ -321,6 +322,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->label31 = (gcnew System::Windows::Forms::Label());
 			this->label32 = (gcnew System::Windows::Forms::Label());
 			this->DenoiseValue = (gcnew System::Windows::Forms::Label());
+			this->videoButton = (gcnew System::Windows::Forms::Button());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DenoiseTrackbar))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar2))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar3))->BeginInit();
@@ -920,11 +922,22 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->DenoiseValue->Size = System::Drawing::Size(0, 13);
 			this->DenoiseValue->TabIndex = 65;
 			// 
+			// videoButton
+			// 
+			this->videoButton->Location = System::Drawing::Point(28, 821);
+			this->videoButton->Name = L"videoButton";
+			this->videoButton->Size = System::Drawing::Size(126, 34);
+			this->videoButton->TabIndex = 66;
+			this->videoButton->Text = L"Make Video from Files..";
+			this->videoButton->UseVisualStyleBackColor = true;
+			this->videoButton->Click += gcnew System::EventHandler(this, &Form1::videoButton_Click);
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1430, 874);
+			this->Controls->Add(this->videoButton);
 			this->Controls->Add(this->DenoiseValue);
 			this->Controls->Add(this->label32);
 			this->Controls->Add(this->label31);
@@ -1127,8 +1140,6 @@ void Form1::image_Capture() {
 					String^ managedFileNameTemp = gcnew String(stdFileNameTemp.c_str());
 					pictureBox2->Image = Image::FromFile(managedFileNameTemp);
 					
-					
-					
 					cv::Mat img = cv::imread(string(FileNameGrey.begin(),FileNameGrey.end()), cv::IMREAD_GRAYSCALE);
 					cv::imwrite("C:\\temp\\myimg.bmp", img);
 
@@ -1296,5 +1307,34 @@ private: System::Void pictureBox2_MouseMove(System::Object^  sender, System::Win
 	}
 */
 
+private: System::Void videoButton_Click(System::Object^  sender, System::EventArgs^  e) {
+	OpenFileDialog^ fileDialog = gcnew OpenFileDialog;
+	fileDialog->Multiselect = true;
+	fileDialog->Filter = "bmp files|*.BMP";
+	fileDialog->Title = "Select BMP Files";
+	vector<string> filenames;
+	cv::VideoWriter writer;
+	writer.open("C:\\MyFolder\\outputVideo.avi", cv::VideoWriter::fourcc('D', 'I', 'V', 'X'), 10, cv::Size(640, 480), true);
+	cv::VideoCapture cap;
+	msclr::interop::marshal_context oMC;
+
+	if (fileDialog->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
+		for each(String^ filename in fileDialog->FileNames) {
+			textBox1->AppendText(filename + Environment::NewLine);
+			string stdfilename = oMC.marshal_as<const char*>(filename);
+			cv::Mat img = cv::imread(stdfilename);
+			
+			writer.write(img);
+			cap >> img;
+			
+		}
+
+		
+	}
+
+	
+	
+
+}
 };
 }
