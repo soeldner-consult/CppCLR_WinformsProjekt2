@@ -229,7 +229,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 	private: System::Windows::Forms::TextBox^  textBox4;
 	private: System::Windows::Forms::TextBox^  textBox5;
 	private: System::Windows::Forms::TextBox^  textBox6;
-	private: System::Windows::Forms::Button^  button9;
+
 	private: System::Windows::Forms::Label^  label18;
 	private: System::Windows::Forms::Label^  label19;
 	private: System::Windows::Forms::Label^  label20;
@@ -299,7 +299,6 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->textBox4 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox5 = (gcnew System::Windows::Forms::TextBox());
 			this->textBox6 = (gcnew System::Windows::Forms::TextBox());
-			this->button9 = (gcnew System::Windows::Forms::Button());
 			this->label18 = (gcnew System::Windows::Forms::Label());
 			this->label19 = (gcnew System::Windows::Forms::Label());
 			this->label20 = (gcnew System::Windows::Forms::Label());
@@ -718,16 +717,6 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->textBox6->Text = L"480";
 			this->textBox6->TextChanged += gcnew System::EventHandler(this, &Form1::textBox6_TextChanged);
 			// 
-			// button9
-			// 
-			this->button9->Location = System::Drawing::Point(552, 812);
-			this->button9->Name = L"button9";
-			this->button9->Size = System::Drawing::Size(126, 34);
-			this->button9->TabIndex = 43;
-			this->button9->Text = L"Close Device";
-			this->button9->UseVisualStyleBackColor = true;
-			this->button9->Click += gcnew System::EventHandler(this, &Form1::button9_Click);
-			// 
 			// label18
 			// 
 			this->label18->AutoSize = true;
@@ -810,7 +799,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->pictureBox1->BackColor = System::Drawing::SystemColors::Window;
 			this->pictureBox1->Location = System::Drawing::Point(12, 29);
 			this->pictureBox1->Name = L"pictureBox1";
-			this->pictureBox1->Size = System::Drawing::Size(620, 485);
+			this->pictureBox1->Size = System::Drawing::Size(640, 480);
 			this->pictureBox1->TabIndex = 53;
 			this->pictureBox1->TabStop = false;
 			// 
@@ -819,7 +808,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->pictureBox2->BackColor = System::Drawing::SystemColors::Window;
 			this->pictureBox2->Location = System::Drawing::Point(664, 29);
 			this->pictureBox2->Name = L"pictureBox2";
-			this->pictureBox2->Size = System::Drawing::Size(658, 485);
+			this->pictureBox2->Size = System::Drawing::Size(640, 480);
 			this->pictureBox2->TabIndex = 54;
 			this->pictureBox2->TabStop = false;
 			this->pictureBox2->MouseMove += gcnew System::Windows::Forms::MouseEventHandler(this, &Form1::pictureBox2_MouseMove);
@@ -960,7 +949,6 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->Controls->Add(this->label20);
 			this->Controls->Add(this->label19);
 			this->Controls->Add(this->label18);
-			this->Controls->Add(this->button9);
 			this->Controls->Add(this->textBox6);
 			this->Controls->Add(this->textBox5);
 			this->Controls->Add(this->textBox4);
@@ -1037,7 +1025,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 		{
 			error = pInitDeviceGUI();
 			if (error == OK)
-				textBox1->Text = "Device Selected, OK";
+				textBox1->Text = "Device Selected, OK" + Environment::NewLine;
 			else {
 				textBox1->Text = "FAIL - Error Code: " + System::Convert::ToString(error);
 			}
@@ -1063,40 +1051,41 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 	X = Convert::ToInt32(textBox3->Text);
 	Y = Convert::ToInt32(textBox5->Text);
 	//---- Get Frame ----
-	textBox1->AppendText("Read Camera Frame ..." + Environment::NewLine);
+	textBox1->AppendText(Environment::NewLine + "Read Camera Frame ..." + Environment::NewLine);
 
 	error = pSetFrame(Width, Height, X, Y);
 
 	//error = pGetFrame(&Form1->Width, &Height, &X, &Y);
 	
 
-	textBox1->AppendText("Start Image Streaming ..." + Environment::NewLine);
-	error = pStartStreaming();
-	if (error == OK)
-		textBox1->AppendText("Starting" + Environment::NewLine);
-	else {
-		textBox1->AppendText("FAIL - Error Code: " + Convert::ToString(error) + Environment::NewLine);
-		textBox1->AppendText("Close PyroCam GigE Device" + Environment::NewLine);
-		pCloseDevice();
-		FreeLibrary(hDLL);
-	}
+	//int ThresValue = trackBar4->Value;
 	
-	int ThresValue = trackBar4->Value;
-	
-	//error = pSetBacklightSuppressionThreshold(trackBar4->Value);  // GetBacklightSuppressionThreshold(threValue);
+	//error = pSetBacklightSuppressionThreshold(0);  // GetBacklightSuppressionThreshold(threValue);
 
 	//if (error == OK)
-	//	textBox1->AppendText("Backlight Suppression Threshold Value = " + trackBar4->Value.ToString());
+	//	textBox1->AppendText(Environment::NewLine + "Backlight Suppression Threshold Value = " + trackBar4->Value.ToString()+ Environment::NewLine);
 	//else {
 	//	textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
 	//}
-	
-	/*error = pSetDenoising(double(DenoiseTrackbar->Value) / 100);
+	//
+	/*error = pSetDenoising(0.85);
 	if (error == OK)
 		textBox1->AppendText("Denoise Value = " + (double(DenoiseTrackbar->Value)/100).ToString());
 	else {
 		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
 	}*/
+
+	error = pStartStreaming();
+	if (error == OK) {
+		textBox1->AppendText(Environment::NewLine + "Start Image Streaming ..." + Environment::NewLine);
+	} else {
+		textBox1->AppendText(Environment::NewLine + "FAIL - Error Code: " + Convert::ToString(error) + Environment::NewLine);
+		textBox1->AppendText("Close PyroCam GigE Device" + Environment::NewLine);
+		pCloseDevice();
+		FreeLibrary(hDLL);
+	}
+	
+	
 
 	Thread^ newThread = gcnew Thread(gcnew ThreadStart(this, &Form1::image_Capture));
 	newThread->Start();
@@ -1105,55 +1094,109 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 
 		
 
-void Form1::image_Capture() {
-	int counter = 0;
-	while (streaming == true) {
+		 void Form1::image_Capture() {
+			 int counter = 0;
+			 
 
-		std::wstring count = std::to_wstring(counter);
-		unsigned char *pTemperatureImage = new unsigned char[Width * Height * 2];
-		unsigned char *pGreyImage = new unsigned char[Width * Height * 2];
-		String^ framestring = textBox7->Text;
-		uint framerate = uint::Parse(framestring);
+			 
+			 
 
-		unsigned short *pImageData = pGetTemperaturImage();
-		if (pImageData) {
-			{
-				memcpy(pTemperatureImage, pImageData, (Width * Height * sizeof(unsigned short)));
-				memcpy(pGreyImage, pImageData, (Width * Height * sizeof(unsigned short)));
+			 while (streaming == true) {
+				 
+				 std::wstring FilePathTemp = L"C:\\MyFolder\\tempimg";
+				 std::wstring FilePathGrey = L"C:\\MyFolder\\greyimg";
 
-				std::wstring FilePathTemp = L"C:\\MyFolder\\tempimg";
-				std::wstring FilePathGrey = L"C:\\MyFolder\\greyimg";
+				 std::wstring FileType = L".bmp";
+				 std::wstring count = std::to_wstring(counter);
+				 std::wstring FileNameTemp = FilePathTemp.append(count).append(FileType);
+				 std::wstring FileNameGrey = FilePathGrey.append(count).append(FileType);
+				 std::string stdFileNameTemp = string(FileNameTemp.begin(), FileNameTemp.end());
+				 std::string stdFileNameGrey = string(FileNameGrey.begin(), FileNameGrey.end());
+				 String^ managedFileNameTemp = gcnew String(stdFileNameTemp.c_str());
+				 String^ managedFileNameGrey = gcnew String(stdFileNameGrey.c_str());
+				/* int ImgCtr = 5;
+				 int ActCtr_ImgProc, Ctr_ImgProc;
 
-				std::wstring FileType = L".bmp";
+				 pGetFrameCounter(ActCtr_ImgProc, Ctr_ImgProc);
+				 Ctr_ImgProc = ActCtr_ImgProc;
 
-				std::wstring FileNameTemp = FilePathTemp.append(count).append(FileType);
-				std::wstring FileNameGrey = FilePathGrey.append(count).append(FileType);
+				 for (int i = 0; i < ImgCtr; i++)
+				 {
+					 pGetFrameCounter(ActCtr_ImgProc, Ctr_ImgProc);
+					 if (ActCtr_ImgProc != Ctr_ImgProc)
+					 {
+						 Ctr_ImgProc = ActCtr_ImgProc;
+						 i++;
+					 }
+					 else
+						 Sleep(5);
+				 }*/
 
-				SaveBitmapToFile((BYTE*)pTemperatureImage, Width, Height, 16, 0, FileNameTemp.c_str());
-				SaveBitmapToFile((BYTE*)pGreyImage, Width, Height, 16, 0, FileNameGrey.c_str());
-				delete[] pGreyImage;
-				delete[] pTemperatureImage;
-				counter++;
+				 unsigned char *pTemperatureImage = new unsigned char[Width * Height * 2];
+				 unsigned char *pGreyImage = new unsigned char[Width * Height * 2];
+				 String^ framestring = textBox7->Text;
+				 uint framerate = uint::Parse(framestring);
 
-				if (counter % 10 == 0) {
-					std::string stdFileNameTemp = string(FileNameTemp.begin(), FileNameTemp.end());
-					String^ managedFileNameTemp = gcnew String(stdFileNameTemp.c_str());
-					pictureBox2->Image = Image::FromFile(managedFileNameTemp);
-					
-					cv::Mat img = cv::imread(string(FileNameGrey.begin(),FileNameGrey.end()), cv::IMREAD_GRAYSCALE);
-					cv::imwrite("C:\\temp\\myimg.bmp", img);
+				 unsigned short *pImageData = pGetTemperaturImage();
+				 if (pImageData) {
+					 {
+						 memcpy(pTemperatureImage, pImageData, (Width * Height * sizeof(unsigned short)));
+						 
 
-					pictureBox1->Image = Image::FromFile("C:\\temp\\myimg.bmp");
-				}
 
-				Sleep(100);
-			}
-		}
 
-	}
-	pCloseDevice();
-	FreeLibrary(hDLL);
-}
+						 SaveBitmapToFile((BYTE*)pTemperatureImage, Width, Height, 16, 0, FileNameTemp.c_str());
+
+						 ifstream input(FileNameTemp.c_str(), ios::binary);
+						 std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
+
+						 
+						 std::copy(buffer.begin(), buffer.end(), this->bildbyte);
+
+						 
+						 delete[] pTemperatureImage;
+						 
+					 }
+				 unsigned short *pImageData = pGetVisibleImage();
+				 
+				 if (pImageData) {
+					 {
+						 
+						 memcpy(pGreyImage, pImageData, (Width * Height * sizeof(unsigned short)));
+
+						 SaveBitmapToFile((BYTE*)pGreyImage, Width, Height, 16, 0, FileNameGrey.c_str());
+						 cv::Mat img = cv::imread(string(FileNameGrey.begin(), FileNameGrey.end()), cv::IMREAD_GRAYSCALE);
+						 cv::imwrite(stdFileNameGrey, img);
+
+
+
+
+
+
+
+
+
+						 delete[] pGreyImage;
+						 
+						 counter++;
+					 }
+
+						 if (counter % 10 == 0) {
+							 
+							 pictureBox2->Image = Image::FromFile(managedFileNameTemp);
+
+							 
+							 pictureBox1->Image = Image::FromFile(managedFileNameGrey);
+						 }
+						 
+						 Sleep(100);
+
+					 }
+				 }
+
+			 }
+		 }
+
 
 private: System::Void button3_Click(System::Object^  sender, System::EventArgs^  e) {
 	OpenFileDialog^ fileDialog = gcnew OpenFileDialog;
@@ -1178,14 +1221,30 @@ private: System::Void textBox6_TextChanged(System::Object^  sender, System::Even
 }
 private: System::Void button2_Click(System::Object^  sender, System::EventArgs^  e) {
 	streaming = false;
-	error = pCloseDevice();
-	textBox1->AppendText("Stopped Streaming");
+	error = pStopStreaming();
+	
+	if (error == OK) {
+		textBox1->AppendText("Stopped Streaming");
+	}
+	else {
+		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
+	}
 }
 private: System::Void button7_Click(System::Object^  sender, System::EventArgs^  e) {
 }
 private: System::Void button4_Click(System::Object^  sender, System::EventArgs^  e) {
 }
 private: System::Void button8_Click(System::Object^  sender, System::EventArgs^  e) {
+	error = pCloseDevice();
+	if(error == OK) {
+		textBox1->AppendText(Environment::NewLine + "Device closed");
+	}
+	else {
+		textBox1->AppendText(Environment::NewLine + "FAIL - Error Code: " + System::Convert::ToString(error));
+	}
+
+	FreeLibrary(hDLL);
+
 }
 private: System::Void label27_Click(System::Object^  sender, System::EventArgs^  e) {
 }
@@ -1208,20 +1267,8 @@ private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e)
 	label30->Text = trackBar4->Value.ToString();
 
 
-	cv::Mat tempimg = cv::imread("C:\\MyFolder\\tempimg1.bmp");
-	//textBox1->Text = System::Convert::ToString(tempimg.at<uint16_t>(250, 250));
-	uchar val = tempimg.at<uchar>(400, 400);
-	textBox1->Text = System::Convert::ToString(val);
-
-	//for (int i = 0; i < tempimg.rows; i++) {
-	//	for (int j = 0; j < tempimg.cols; j++) {
-	//		tempimg.at<uint16_t>(i, j) -= 600;
-	//	}
-	//}
-
-	/*cv::imwrite("C:\\temp\\myimgtemp.bmp", tempimg);*/
-
-	pictureBox2->Image = Image::FromFile("C:\\MyFolder\\tempimg1.bmp");
+	
+	pictureBox2->Image = Image::FromFile("C:\\Pyrocam\\reference.bmp");
 	
 	
 	//cv::Mat img = cv::imread("C:\\MyFolder\\tempimg2.bmp");
@@ -1229,21 +1276,21 @@ private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e)
 	//Bitmap^ bitmap = Bitmap::FromHbitmap((IntPtr)hBit);
 	//pictureBox1->Image = bitmap;
 
-	cv::Mat img = cv::imread("C:\\MyFolder\\greyimg1.bmp", cv::IMREAD_GRAYSCALE);
+	//cv::Mat img = cv::imread("C:\\MyFolder\\greyimg1.bmp", cv::IMREAD_GRAYSCALE);
 	//cv::Mat im_color;
 	//cv::applyColorMap(img, im_color, cv::COLORMAP_HOT);
 	/*cv::normalize(img, im_color, 600, 2500, cv::NORM_MINMAX,CV_16FC1);
 	cv::Mat invert;
 	cv::bitwise_not(im_color, invert);*/
 
-	cv::imwrite("C:\\temp\\myimg.bmp", img);
+	//cv::imwrite("C:\\temp\\myimg.bmp", img);
 
 	//Bitmap^ bitmap = ConvertMatToManagedBitmap(img);
 	//bitmap->Save("C:\\temp\\mybitmap.bmp", System::Drawing::Imaging::ImageFormat::Bmp);
 	
-	pictureBox1->Image = Image::FromFile("C:\\temp\\myimg.bmp");
+	//pictureBox1->Image = Image::FromFile("C:\\temp\\myimg.bmp");
 	
-	ifstream input(L"C:\\MyFolder\\tempimg1.bmp", ios::binary);
+	ifstream input(L"C:\\Pyrocam\\reference.bmp", ios::binary);
 	std::vector<unsigned char> buffer(std::istreambuf_iterator<char>(input), {});
 	
 	this->LengthOfArray = buffer.size();
