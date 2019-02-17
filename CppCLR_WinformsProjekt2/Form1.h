@@ -162,13 +162,13 @@ namespace CppCLR_WinformsProjekt {
 			this->pGetFrame = (TGetFrameSize)GetProcAddress(hDLL, "GetFrame");
 			this->pSetFrame = (TSetFrameSize)GetProcAddress(hDLL, "SetFrame");
 			
-			this->pSetBacklightSuppressionThreshold = (TSetBacklightSuppressionThreshold)GetProcAddress(hDLL, "Set Backlight Suppression Threhold");
-			this->pGetBacklightSuppressionThreshold = (TGetBacklightSuppressionThreshold)GetProcAddress(hDLL, "Get Backlight Suppression Threshold");
-			this->pGetBacklightSuppressionClampMode = (TGetBacklightSuppressionClampMode)GetProcAddress(hDLL, "Get Backlight Suppression Clamp Mode");
-			this->pSetBacklightSuppressionClampMode = (TSetBacklightSuppressionClampMode)GetProcAddress(hDLL, "Set Backlight Suppression Clamp Mode");
-			this->pSetBacklightSuppression = (TSetBacklightSuppression)GetProcAddress(hDLL, "Set Backlight Suppression");
+			this->pSetBacklightSuppressionThreshold = (TSetBacklightSuppressionThreshold)GetProcAddress(hDLL, "SetBacklightSuppressionThreshold");
+			this->pGetBacklightSuppressionThreshold = (TGetBacklightSuppressionThreshold)GetProcAddress(hDLL, "GetBacklightSuppressionThreshold");
+			this->pGetBacklightSuppressionClampMode = (TGetBacklightSuppressionClampMode)GetProcAddress(hDLL, "GetBacklightSuppressionClamp Mode");
+			this->pSetBacklightSuppressionClampMode = (TSetBacklightSuppressionClampMode)GetProcAddress(hDLL, "SetBacklightSuppressionClamp Mode");
+			this->pSetBacklightSuppression = (TSetBacklightSuppression)GetProcAddress(hDLL, "SetBacklightSuppression");
 
-			this->pSetDenoising = (TSetDenoising)GetProcAddress(hDLL, "Set Denoising");
+			this->pSetDenoising = (TSetDenoising)GetProcAddress(hDLL, "SetDenoising");
 
 
 		}
@@ -183,6 +183,7 @@ namespace CppCLR_WinformsProjekt {
 			{
 				delete components;
 			}
+			FreeLibrary(hDLL);
 		}
 	private: System::Windows::Forms::TextBox^  textBox1;
 	protected:
@@ -558,6 +559,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->radioButton1->TabStop = true;
 			this->radioButton1->Text = L"Auto";
 			this->radioButton1->UseVisualStyleBackColor = true;
+			this->radioButton1->CheckedChanged += gcnew System::EventHandler(this, &Form1::radioButton1_CheckedChanged);
 			// 
 			// radioButton2
 			// 
@@ -569,6 +571,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->radioButton2->TabStop = true;
 			this->radioButton2->Text = L"Off";
 			this->radioButton2->UseVisualStyleBackColor = true;
+			this->radioButton2->CheckedChanged += gcnew System::EventHandler(this, &Form1::radioButton2_CheckedChanged);
 			// 
 			// label12
 			// 
@@ -1082,7 +1085,6 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 		textBox1->AppendText(Environment::NewLine + "FAIL - Error Code: " + Convert::ToString(error) + Environment::NewLine);
 		textBox1->AppendText("Close PyroCam GigE Device" + Environment::NewLine);
 		pCloseDevice();
-		FreeLibrary(hDLL);
 	}
 	
 	
@@ -1243,7 +1245,7 @@ private: System::Void button8_Click(System::Object^  sender, System::EventArgs^ 
 		textBox1->AppendText(Environment::NewLine + "FAIL - Error Code: " + System::Convert::ToString(error));
 	}
 
-	FreeLibrary(hDLL);
+	
 
 }
 private: System::Void label27_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1253,7 +1255,7 @@ private: System::Void label8_Click(System::Object^  sender, System::EventArgs^  
 
 private: System::Void button9_Click(System::Object^  sender, System::EventArgs^  e) {
 	pCloseDevice();
-	FreeLibrary(hDLL);
+	
 }
 private: System::Void groupBox1_Enter(System::Object^  sender, System::EventArgs^  e) {
 }
@@ -1382,6 +1384,12 @@ private: System::Void videoButton_Click(System::Object^  sender, System::EventAr
 	
 	
 
+}
+private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+	int backlightoff = 0;
+	pSetBacklightSuppression(backlightoff);
+}
+private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
 }
 };
 }
