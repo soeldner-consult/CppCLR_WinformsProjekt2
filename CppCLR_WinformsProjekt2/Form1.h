@@ -66,6 +66,10 @@ typedef int(__cdecl * TSetBacklightSuppression)(int Mode);
 //---- Denoising ----
 typedef int(__cdecl * TSetDenoising)(double Value);
 
+//---- Temperature Clamp Mode ----
+typedef int(__cdecl * TSetTemperatureClampMode)(int Mode);
+typedef int(__cdecl * TGetTemperatureClampMode)(int *pMode);
+
 namespace CppCLR_WinformsProjekt {
 
 	using namespace System;
@@ -116,12 +120,15 @@ namespace CppCLR_WinformsProjekt {
 		TGetBacklightSuppressionClampMode pGetBacklightSuppressionClampMode;
 
 		TSetDenoising pSetDenoising;
+		
+		TSetTemperatureClampMode pSetTemperatureClampMode;
+		TGetTemperatureClampMode pGetTemperatureClampMode;
 
 	private: System::Windows::Forms::GroupBox^  groupBox1;
 	private: System::Windows::Forms::TextBox^  textBox7;
 	private: System::Windows::Forms::Label^  label27;
-	private: System::Windows::Forms::Label^  label10;
-	private: System::Windows::Forms::Label^  label11;
+
+
 	private: System::Windows::Forms::Label^  label28;
 	private: System::Windows::Forms::Label^  label29;
 	private: System::Windows::Forms::Label^  label30;
@@ -131,6 +138,9 @@ namespace CppCLR_WinformsProjekt {
 	private: System::Windows::Forms::Label^  label32;
 	private: System::Windows::Forms::Label^  DenoiseValue;
 	private: System::Windows::Forms::Button^  videoButton;
+	private: System::Windows::Forms::RadioButton^  radioButton8;
+	private: System::Windows::Forms::GroupBox^  groupBox2;
+	private: System::Windows::Forms::GroupBox^  groupBox3;
 	public: long LengthOfArray;
 
 
@@ -170,6 +180,8 @@ namespace CppCLR_WinformsProjekt {
 
 			this->pSetDenoising = (TSetDenoising)GetProcAddress(hDLL, "SetDenoising");
 
+			this->pSetTemperatureClampMode = (TSetTemperatureClampMode)GetProcAddress(hDLL,"SetTemperatureClampMode");
+			this->pGetTemperatureClampMode = (TGetTemperatureClampMode)GetProcAddress(hDLL,"GetTemperatureClampMode");
 
 		}
 
@@ -187,15 +199,15 @@ namespace CppCLR_WinformsProjekt {
 		}
 	private: System::Windows::Forms::TextBox^  textBox1;
 	protected:
-	private: System::Windows::Forms::Label^  label1;
+
 	private: System::Windows::Forms::Splitter^  splitter1;
-	private: System::Windows::Forms::Label^  label2;
+
 private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 
 	private: System::Windows::Forms::Label^  label3;
 	private: System::Windows::Forms::Label^  label4;
-	private: System::Windows::Forms::TrackBar^  trackBar2;
-	private: System::Windows::Forms::TrackBar^  trackBar3;
+
+
 	private: System::Windows::Forms::Label^  label5;
 	private: System::Windows::Forms::Label^  label6;
 	private: System::Windows::Forms::Label^  label7;
@@ -210,7 +222,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 	private: System::Windows::Forms::Button^  button6;
 
 
-	private: System::Windows::Forms::Button^  button7;
+
 	private: System::Windows::Forms::Button^  button8;
 	private: System::Windows::Forms::RadioButton^  radioButton1;
 	private: System::Windows::Forms::RadioButton^  radioButton2;
@@ -261,14 +273,10 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 		void InitializeComponent(void)
 		{
 			this->textBox1 = (gcnew System::Windows::Forms::TextBox());
-			this->label1 = (gcnew System::Windows::Forms::Label());
 			this->splitter1 = (gcnew System::Windows::Forms::Splitter());
-			this->label2 = (gcnew System::Windows::Forms::Label());
 			this->DenoiseTrackbar = (gcnew System::Windows::Forms::TrackBar());
 			this->label3 = (gcnew System::Windows::Forms::Label());
 			this->label4 = (gcnew System::Windows::Forms::Label());
-			this->trackBar2 = (gcnew System::Windows::Forms::TrackBar());
-			this->trackBar3 = (gcnew System::Windows::Forms::TrackBar());
 			this->label5 = (gcnew System::Windows::Forms::Label());
 			this->label6 = (gcnew System::Windows::Forms::Label());
 			this->label7 = (gcnew System::Windows::Forms::Label());
@@ -281,7 +289,6 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->button5 = (gcnew System::Windows::Forms::Button());
 			this->label9 = (gcnew System::Windows::Forms::Label());
 			this->button6 = (gcnew System::Windows::Forms::Button());
-			this->button7 = (gcnew System::Windows::Forms::Button());
 			this->button8 = (gcnew System::Windows::Forms::Button());
 			this->radioButton1 = (gcnew System::Windows::Forms::RadioButton());
 			this->radioButton2 = (gcnew System::Windows::Forms::RadioButton());
@@ -314,8 +321,6 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->groupBox1 = (gcnew System::Windows::Forms::GroupBox());
 			this->textBox7 = (gcnew System::Windows::Forms::TextBox());
 			this->label27 = (gcnew System::Windows::Forms::Label());
-			this->label10 = (gcnew System::Windows::Forms::Label());
-			this->label11 = (gcnew System::Windows::Forms::Label());
 			this->label28 = (gcnew System::Windows::Forms::Label());
 			this->label29 = (gcnew System::Windows::Forms::Label());
 			this->label30 = (gcnew System::Windows::Forms::Label());
@@ -323,13 +328,16 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->label32 = (gcnew System::Windows::Forms::Label());
 			this->DenoiseValue = (gcnew System::Windows::Forms::Label());
 			this->videoButton = (gcnew System::Windows::Forms::Button());
+			this->radioButton8 = (gcnew System::Windows::Forms::RadioButton());
+			this->groupBox2 = (gcnew System::Windows::Forms::GroupBox());
+			this->groupBox3 = (gcnew System::Windows::Forms::GroupBox());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DenoiseTrackbar))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar2))->BeginInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar3))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar4))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->BeginInit();
 			this->groupBox1->SuspendLayout();
+			this->groupBox2->SuspendLayout();
+			this->groupBox3->SuspendLayout();
 			this->SuspendLayout();
 			// 
 			// textBox1
@@ -341,16 +349,6 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->textBox1->Size = System::Drawing::Size(324, 230);
 			this->textBox1->TabIndex = 0;
 			// 
-			// label1
-			// 
-			this->label1->AutoSize = true;
-			this->label1->Location = System::Drawing::Point(386, 567);
-			this->label1->Name = L"label1";
-			this->label1->Size = System::Drawing::Size(87, 13);
-			this->label1->TabIndex = 1;
-			this->label1->Text = L"Contrast Settings";
-			this->label1->Click += gcnew System::EventHandler(this, &Form1::label1_Click);
-			// 
 			// splitter1
 			// 
 			this->splitter1->Location = System::Drawing::Point(0, 0);
@@ -359,28 +357,22 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->splitter1->TabIndex = 2;
 			this->splitter1->TabStop = false;
 			// 
-			// label2
-			// 
-			this->label2->AutoSize = true;
-			this->label2->Location = System::Drawing::Point(366, 784);
-			this->label2->Name = L"label2";
-			this->label2->Size = System::Drawing::Size(0, 13);
-			this->label2->TabIndex = 3;
-			// 
 			// DenoiseTrackbar
 			// 
-			this->DenoiseTrackbar->Location = System::Drawing::Point(365, 812);
+			this->DenoiseTrackbar->Enabled = false;
+			this->DenoiseTrackbar->Location = System::Drawing::Point(616, 808);
 			this->DenoiseTrackbar->Maximum = 95;
 			this->DenoiseTrackbar->Name = L"DenoiseTrackbar";
 			this->DenoiseTrackbar->Size = System::Drawing::Size(121, 45);
 			this->DenoiseTrackbar->TabIndex = 4;
 			this->DenoiseTrackbar->TickFrequency = 5;
 			this->DenoiseTrackbar->Value = 85;
+			this->DenoiseTrackbar->Scroll += gcnew System::EventHandler(this, &Form1::DenoiseTrackbar_Scroll_1);
 			// 
 			// label3
 			// 
 			this->label3->AutoSize = true;
-			this->label3->Location = System::Drawing::Point(32, 13);
+			this->label3->Location = System::Drawing::Point(12, 9);
 			this->label3->Name = L"label3";
 			this->label3->Size = System::Drawing::Size(61, 13);
 			this->label3->TabIndex = 5;
@@ -389,33 +381,16 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label4
 			// 
 			this->label4->AutoSize = true;
-			this->label4->Location = System::Drawing::Point(624, 13);
+			this->label4->Location = System::Drawing::Point(661, 9);
 			this->label4->Name = L"label4";
 			this->label4->Size = System::Drawing::Size(99, 13);
 			this->label4->TabIndex = 6;
 			this->label4->Text = L"Temperature Image";
 			// 
-			// trackBar2
-			// 
-			this->trackBar2->Location = System::Drawing::Point(369, 593);
-			this->trackBar2->Maximum = 25;
-			this->trackBar2->Name = L"trackBar2";
-			this->trackBar2->Size = System::Drawing::Size(121, 45);
-			this->trackBar2->TabIndex = 7;
-			// 
-			// trackBar3
-			// 
-			this->trackBar3->Location = System::Drawing::Point(369, 644);
-			this->trackBar3->Maximum = 25;
-			this->trackBar3->Name = L"trackBar3";
-			this->trackBar3->Size = System::Drawing::Size(121, 45);
-			this->trackBar3->TabIndex = 8;
-			this->trackBar3->Scroll += gcnew System::EventHandler(this, &Form1::trackBar3_Scroll);
-			// 
 			// label5
 			// 
 			this->label5->AutoSize = true;
-			this->label5->Location = System::Drawing::Point(661, 567);
+			this->label5->Location = System::Drawing::Point(764, 554);
 			this->label5->Name = L"label5";
 			this->label5->Size = System::Drawing::Size(90, 13);
 			this->label5->TabIndex = 9;
@@ -424,7 +399,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label6
 			// 
 			this->label6->AutoSize = true;
-			this->label6->Location = System::Drawing::Point(661, 644);
+			this->label6->Location = System::Drawing::Point(764, 631);
 			this->label6->Name = L"label6";
 			this->label6->Size = System::Drawing::Size(75, 13);
 			this->label6->TabIndex = 10;
@@ -433,7 +408,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label7
 			// 
 			this->label7->AutoSize = true;
-			this->label7->Location = System::Drawing::Point(929, 567);
+			this->label7->Location = System::Drawing::Point(1032, 554);
 			this->label7->Name = L"label7";
 			this->label7->Size = System::Drawing::Size(77, 13);
 			this->label7->TabIndex = 11;
@@ -443,7 +418,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label8
 			// 
 			this->label8->AutoSize = true;
-			this->label8->Location = System::Drawing::Point(661, 717);
+			this->label8->Location = System::Drawing::Point(6, 16);
 			this->label8->Name = L"label8";
 			this->label8->Size = System::Drawing::Size(115, 13);
 			this->label8->TabIndex = 12;
@@ -452,7 +427,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// trackBar4
 			// 
-			this->trackBar4->Location = System::Drawing::Point(664, 733);
+			this->trackBar4->Enabled = false;
+			this->trackBar4->Location = System::Drawing::Point(9, 70);
 			this->trackBar4->Maximum = 4095;
 			this->trackBar4->Name = L"trackBar4";
 			this->trackBar4->Size = System::Drawing::Size(121, 45);
@@ -461,7 +437,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// button1
 			// 
-			this->button1->Location = System::Drawing::Point(664, 593);
+			this->button1->Enabled = false;
+			this->button1->Location = System::Drawing::Point(767, 580);
 			this->button1->Name = L"button1";
 			this->button1->Size = System::Drawing::Size(94, 34);
 			this->button1->TabIndex = 14;
@@ -471,7 +448,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// button2
 			// 
-			this->button2->Location = System::Drawing::Point(773, 593);
+			this->button2->Enabled = false;
+			this->button2->Location = System::Drawing::Point(876, 580);
 			this->button2->Name = L"button2";
 			this->button2->Size = System::Drawing::Size(94, 34);
 			this->button2->TabIndex = 15;
@@ -481,7 +459,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// button3
 			// 
-			this->button3->Location = System::Drawing::Point(664, 669);
+			this->button3->Enabled = false;
+			this->button3->Location = System::Drawing::Point(767, 656);
 			this->button3->Name = L"button3";
 			this->button3->Size = System::Drawing::Size(94, 34);
 			this->button3->TabIndex = 16;
@@ -491,7 +470,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// button4
 			// 
-			this->button4->Location = System::Drawing::Point(773, 669);
+			this->button4->Enabled = false;
+			this->button4->Location = System::Drawing::Point(876, 656);
 			this->button4->Name = L"button4";
 			this->button4->Size = System::Drawing::Size(94, 34);
 			this->button4->TabIndex = 17;
@@ -501,7 +481,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// button5
 			// 
-			this->button5->Location = System::Drawing::Point(932, 593);
+			this->button5->Enabled = false;
+			this->button5->Location = System::Drawing::Point(1035, 580);
 			this->button5->Name = L"button5";
 			this->button5->Size = System::Drawing::Size(94, 34);
 			this->button5->TabIndex = 18;
@@ -512,7 +493,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label9
 			// 
 			this->label9->AutoSize = true;
-			this->label9->Location = System::Drawing::Point(529, 567);
+			this->label9->Location = System::Drawing::Point(632, 554);
 			this->label9->Name = L"label9";
 			this->label9->Size = System::Drawing::Size(82, 13);
 			this->label9->TabIndex = 19;
@@ -521,7 +502,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// button6
 			// 
-			this->button6->Location = System::Drawing::Point(519, 593);
+			this->button6->Location = System::Drawing::Point(622, 580);
 			this->button6->Name = L"button6";
 			this->button6->Size = System::Drawing::Size(126, 34);
 			this->button6->TabIndex = 20;
@@ -529,19 +510,10 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->button6->UseVisualStyleBackColor = true;
 			this->button6->Click += gcnew System::EventHandler(this, &Form1::button6_Click);
 			// 
-			// button7
-			// 
-			this->button7->Location = System::Drawing::Point(519, 669);
-			this->button7->Name = L"button7";
-			this->button7->Size = System::Drawing::Size(126, 34);
-			this->button7->TabIndex = 23;
-			this->button7->Text = L"Select Device";
-			this->button7->UseVisualStyleBackColor = true;
-			this->button7->Click += gcnew System::EventHandler(this, &Form1::button7_Click);
-			// 
 			// button8
 			// 
-			this->button8->Location = System::Drawing::Point(519, 717);
+			this->button8->Enabled = false;
+			this->button8->Location = System::Drawing::Point(622, 656);
 			this->button8->Name = L"button8";
 			this->button8->Size = System::Drawing::Size(126, 34);
 			this->button8->TabIndex = 24;
@@ -552,31 +524,31 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// radioButton1
 			// 
 			this->radioButton1->AutoSize = true;
-			this->radioButton1->Location = System::Drawing::Point(697, 798);
+			this->radioButton1->Enabled = false;
+			this->radioButton1->Location = System::Drawing::Point(18, 116);
 			this->radioButton1->Name = L"radioButton1";
 			this->radioButton1->Size = System::Drawing::Size(47, 17);
 			this->radioButton1->TabIndex = 25;
-			this->radioButton1->TabStop = true;
 			this->radioButton1->Text = L"Auto";
 			this->radioButton1->UseVisualStyleBackColor = true;
-			this->radioButton1->CheckedChanged += gcnew System::EventHandler(this, &Form1::radioButton1_CheckedChanged);
 			// 
 			// radioButton2
 			// 
 			this->radioButton2->AutoSize = true;
-			this->radioButton2->Location = System::Drawing::Point(696, 821);
+			this->radioButton2->Checked = true;
+			this->radioButton2->Enabled = false;
+			this->radioButton2->Location = System::Drawing::Point(17, 139);
 			this->radioButton2->Name = L"radioButton2";
 			this->radioButton2->Size = System::Drawing::Size(39, 17);
 			this->radioButton2->TabIndex = 26;
 			this->radioButton2->TabStop = true;
 			this->radioButton2->Text = L"Off";
 			this->radioButton2->UseVisualStyleBackColor = true;
-			this->radioButton2->CheckedChanged += gcnew System::EventHandler(this, &Form1::radioButton2_CheckedChanged);
 			// 
 			// label12
 			// 
 			this->label12->AutoSize = true;
-			this->label12->Location = System::Drawing::Point(994, 752);
+			this->label12->Location = System::Drawing::Point(795, 739);
 			this->label12->Name = L"label12";
 			this->label12->Size = System::Drawing::Size(132, 13);
 			this->label12->TabIndex = 28;
@@ -585,7 +557,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label13
 			// 
 			this->label13->AutoSize = true;
-			this->label13->Location = System::Drawing::Point(810, 733);
+			this->label13->Location = System::Drawing::Point(9, 19);
 			this->label13->Name = L"label13";
 			this->label13->Size = System::Drawing::Size(69, 13);
 			this->label13->TabIndex = 29;
@@ -594,7 +566,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// radioButton3
 			// 
 			this->radioButton3->AutoSize = true;
-			this->radioButton3->Location = System::Drawing::Point(812, 784);
+			this->radioButton3->Enabled = false;
+			this->radioButton3->Location = System::Drawing::Point(11, 70);
 			this->radioButton3->Name = L"radioButton3";
 			this->radioButton3->Size = System::Drawing::Size(81, 17);
 			this->radioButton3->TabIndex = 31;
@@ -605,7 +578,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// radioButton4
 			// 
 			this->radioButton4->AutoSize = true;
-			this->radioButton4->Location = System::Drawing::Point(813, 761);
+			this->radioButton4->Enabled = false;
+			this->radioButton4->Location = System::Drawing::Point(12, 47);
 			this->radioButton4->Name = L"radioButton4";
 			this->radioButton4->Size = System::Drawing::Size(78, 17);
 			this->radioButton4->TabIndex = 30;
@@ -616,19 +590,20 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// radioButton5
 			// 
 			this->radioButton5->AutoSize = true;
-			this->radioButton5->Location = System::Drawing::Point(19, 29);
+			this->radioButton5->Enabled = false;
+			this->radioButton5->Location = System::Drawing::Point(19, 21);
 			this->radioButton5->Name = L"radioButton5";
 			this->radioButton5->Size = System::Drawing::Size(107, 17);
 			this->radioButton5->TabIndex = 32;
-			this->radioButton5->TabStop = true;
 			this->radioButton5->Text = L"Min. -Min. -Temp.";
 			this->radioButton5->UseVisualStyleBackColor = true;
-			this->radioButton5->CheckedChanged += gcnew System::EventHandler(this, &Form1::radioButton5_CheckedChanged);
 			// 
 			// radioButton6
 			// 
 			this->radioButton6->AutoSize = true;
-			this->radioButton6->Location = System::Drawing::Point(19, 53);
+			this->radioButton6->Checked = true;
+			this->radioButton6->Enabled = false;
+			this->radioButton6->Location = System::Drawing::Point(19, 45);
 			this->radioButton6->Name = L"radioButton6";
 			this->radioButton6->Size = System::Drawing::Size(110, 17);
 			this->radioButton6->TabIndex = 33;
@@ -639,18 +614,18 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// radioButton7
 			// 
 			this->radioButton7->AutoSize = true;
-			this->radioButton7->Location = System::Drawing::Point(19, 76);
+			this->radioButton7->Enabled = false;
+			this->radioButton7->Location = System::Drawing::Point(19, 68);
 			this->radioButton7->Name = L"radioButton7";
 			this->radioButton7->Size = System::Drawing::Size(113, 17);
 			this->radioButton7->TabIndex = 34;
-			this->radioButton7->TabStop = true;
 			this->radioButton7->Text = L"Max. -Max. -Temp.";
 			this->radioButton7->UseVisualStyleBackColor = true;
 			// 
 			// label14
 			// 
 			this->label14->AutoSize = true;
-			this->label14->Location = System::Drawing::Point(929, 648);
+			this->label14->Location = System::Drawing::Point(1032, 635);
 			this->label14->Name = L"label14";
 			this->label14->Size = System::Drawing::Size(17, 13);
 			this->label14->TabIndex = 35;
@@ -659,7 +634,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label15
 			// 
 			this->label15->AutoSize = true;
-			this->label15->Location = System::Drawing::Point(1032, 647);
+			this->label15->Location = System::Drawing::Point(1135, 634);
 			this->label15->Name = L"label15";
 			this->label15->Size = System::Drawing::Size(17, 13);
 			this->label15->TabIndex = 36;
@@ -669,7 +644,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label16
 			// 
 			this->label16->AutoSize = true;
-			this->label16->Location = System::Drawing::Point(929, 676);
+			this->label16->Location = System::Drawing::Point(1032, 663);
 			this->label16->Name = L"label16";
 			this->label16->Size = System::Drawing::Size(38, 13);
 			this->label16->TabIndex = 37;
@@ -678,7 +653,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label17
 			// 
 			this->label17->AutoSize = true;
-			this->label17->Location = System::Drawing::Point(1032, 675);
+			this->label17->Location = System::Drawing::Point(1135, 662);
 			this->label17->Name = L"label17";
 			this->label17->Size = System::Drawing::Size(41, 13);
 			this->label17->TabIndex = 38;
@@ -686,7 +661,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// textBox3
 			// 
-			this->textBox3->Location = System::Drawing::Point(979, 645);
+			this->textBox3->Location = System::Drawing::Point(1082, 632);
 			this->textBox3->Name = L"textBox3";
 			this->textBox3->Size = System::Drawing::Size(47, 20);
 			this->textBox3->TabIndex = 39;
@@ -695,7 +670,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// textBox4
 			// 
-			this->textBox4->Location = System::Drawing::Point(979, 673);
+			this->textBox4->Location = System::Drawing::Point(1082, 660);
 			this->textBox4->Name = L"textBox4";
 			this->textBox4->Size = System::Drawing::Size(47, 20);
 			this->textBox4->TabIndex = 40;
@@ -704,7 +679,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// textBox5
 			// 
-			this->textBox5->Location = System::Drawing::Point(1079, 644);
+			this->textBox5->Location = System::Drawing::Point(1182, 631);
 			this->textBox5->Name = L"textBox5";
 			this->textBox5->Size = System::Drawing::Size(47, 20);
 			this->textBox5->TabIndex = 41;
@@ -713,7 +688,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// 
 			// textBox6
 			// 
-			this->textBox6->Location = System::Drawing::Point(1079, 673);
+			this->textBox6->Location = System::Drawing::Point(1182, 660);
 			this->textBox6->Name = L"textBox6";
 			this->textBox6->Size = System::Drawing::Size(47, 20);
 			this->textBox6->TabIndex = 42;
@@ -822,16 +797,16 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->groupBox1->Controls->Add(this->radioButton6);
 			this->groupBox1->Controls->Add(this->radioButton5);
 			this->groupBox1->Controls->Add(this->radioButton7);
-			this->groupBox1->Location = System::Drawing::Point(989, 768);
+			this->groupBox1->Location = System::Drawing::Point(790, 755);
 			this->groupBox1->Name = L"groupBox1";
-			this->groupBox1->Size = System::Drawing::Size(200, 100);
+			this->groupBox1->Size = System::Drawing::Size(152, 100);
 			this->groupBox1->TabIndex = 55;
 			this->groupBox1->TabStop = false;
 			this->groupBox1->Enter += gcnew System::EventHandler(this, &Form1::groupBox1_Enter);
 			// 
 			// textBox7
 			// 
-			this->textBox7->Location = System::Drawing::Point(1068, 601);
+			this->textBox7->Location = System::Drawing::Point(1171, 588);
 			this->textBox7->Name = L"textBox7";
 			this->textBox7->Size = System::Drawing::Size(47, 20);
 			this->textBox7->TabIndex = 56;
@@ -840,33 +815,17 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label27
 			// 
 			this->label27->AutoSize = true;
-			this->label27->Location = System::Drawing::Point(1049, 569);
+			this->label27->Location = System::Drawing::Point(1152, 556);
 			this->label27->Name = L"label27";
 			this->label27->Size = System::Drawing::Size(62, 13);
 			this->label27->TabIndex = 57;
 			this->label27->Text = L"Frame Rate";
 			this->label27->Click += gcnew System::EventHandler(this, &Form1::label27_Click);
 			// 
-			// label10
-			// 
-			this->label10->AutoSize = true;
-			this->label10->Location = System::Drawing::Point(496, 593);
-			this->label10->Name = L"label10";
-			this->label10->Size = System::Drawing::Size(0, 13);
-			this->label10->TabIndex = 58;
-			// 
-			// label11
-			// 
-			this->label11->AutoSize = true;
-			this->label11->Location = System::Drawing::Point(496, 648);
-			this->label11->Name = L"label11";
-			this->label11->Size = System::Drawing::Size(0, 13);
-			this->label11->TabIndex = 59;
-			// 
 			// label28
 			// 
 			this->label28->AutoSize = true;
-			this->label28->Location = System::Drawing::Point(366, 788);
+			this->label28->Location = System::Drawing::Point(613, 778);
 			this->label28->Name = L"label28";
 			this->label28->Size = System::Drawing::Size(127, 13);
 			this->label28->TabIndex = 60;
@@ -875,7 +834,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label29
 			// 
 			this->label29->AutoSize = true;
-			this->label29->Location = System::Drawing::Point(486, 817);
+			this->label29->Location = System::Drawing::Point(737, 813);
 			this->label29->Name = L"label29";
 			this->label29->Size = System::Drawing::Size(0, 13);
 			this->label29->TabIndex = 61;
@@ -883,7 +842,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// label30
 			// 
 			this->label30->AutoSize = true;
-			this->label30->Location = System::Drawing::Point(788, 733);
+			this->label30->Location = System::Drawing::Point(146, 78);
 			this->label30->Name = L"label30";
 			this->label30->Size = System::Drawing::Size(0, 13);
 			this->label30->TabIndex = 62;
@@ -909,10 +868,11 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			// DenoiseValue
 			// 
 			this->DenoiseValue->AutoSize = true;
-			this->DenoiseValue->Location = System::Drawing::Point(486, 817);
+			this->DenoiseValue->Location = System::Drawing::Point(737, 813);
 			this->DenoiseValue->Name = L"DenoiseValue";
 			this->DenoiseValue->Size = System::Drawing::Size(0, 13);
 			this->DenoiseValue->TabIndex = 65;
+			this->DenoiseValue->Click += gcnew System::EventHandler(this, &Form1::DenoiseValue_Click);
 			// 
 			// videoButton
 			// 
@@ -924,20 +884,57 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->videoButton->UseVisualStyleBackColor = true;
 			this->videoButton->Click += gcnew System::EventHandler(this, &Form1::videoButton_Click);
 			// 
+			// radioButton8
+			// 
+			this->radioButton8->AutoSize = true;
+			this->radioButton8->Enabled = false;
+			this->radioButton8->Location = System::Drawing::Point(18, 41);
+			this->radioButton8->Name = L"radioButton8";
+			this->radioButton8->Size = System::Drawing::Size(60, 17);
+			this->radioButton8->TabIndex = 67;
+			this->radioButton8->Text = L"Manual";
+			this->radioButton8->UseVisualStyleBackColor = true;
+			// 
+			// groupBox2
+			// 
+			this->groupBox2->BackColor = System::Drawing::SystemColors::Control;
+			this->groupBox2->Controls->Add(this->trackBar4);
+			this->groupBox2->Controls->Add(this->radioButton8);
+			this->groupBox2->Controls->Add(this->label8);
+			this->groupBox2->Controls->Add(this->radioButton1);
+			this->groupBox2->Controls->Add(this->radioButton2);
+			this->groupBox2->Controls->Add(this->label30);
+			this->groupBox2->Location = System::Drawing::Point(377, 566);
+			this->groupBox2->Name = L"groupBox2";
+			this->groupBox2->Size = System::Drawing::Size(178, 179);
+			this->groupBox2->TabIndex = 56;
+			this->groupBox2->TabStop = false;
+			// 
+			// groupBox3
+			// 
+			this->groupBox3->BackColor = System::Drawing::SystemColors::Control;
+			this->groupBox3->Controls->Add(this->radioButton4);
+			this->groupBox3->Controls->Add(this->label13);
+			this->groupBox3->Controls->Add(this->radioButton3);
+			this->groupBox3->Location = System::Drawing::Point(377, 759);
+			this->groupBox3->Name = L"groupBox3";
+			this->groupBox3->Size = System::Drawing::Size(178, 96);
+			this->groupBox3->TabIndex = 68;
+			this->groupBox3->TabStop = false;
+			// 
 			// Form1
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(1430, 874);
+			this->Controls->Add(this->groupBox3);
+			this->Controls->Add(this->groupBox2);
 			this->Controls->Add(this->videoButton);
 			this->Controls->Add(this->DenoiseValue);
 			this->Controls->Add(this->label32);
 			this->Controls->Add(this->label31);
-			this->Controls->Add(this->label30);
 			this->Controls->Add(this->label29);
 			this->Controls->Add(this->label28);
-			this->Controls->Add(this->label11);
-			this->Controls->Add(this->label10);
 			this->Controls->Add(this->label27);
 			this->Controls->Add(this->textBox7);
 			this->Controls->Add(this->groupBox1);
@@ -960,14 +957,8 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->Controls->Add(this->label16);
 			this->Controls->Add(this->label15);
 			this->Controls->Add(this->label14);
-			this->Controls->Add(this->radioButton3);
-			this->Controls->Add(this->radioButton4);
-			this->Controls->Add(this->label13);
 			this->Controls->Add(this->label12);
-			this->Controls->Add(this->radioButton2);
-			this->Controls->Add(this->radioButton1);
 			this->Controls->Add(this->button8);
-			this->Controls->Add(this->button7);
 			this->Controls->Add(this->button6);
 			this->Controls->Add(this->label9);
 			this->Controls->Add(this->button5);
@@ -975,31 +966,27 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			this->Controls->Add(this->button3);
 			this->Controls->Add(this->button2);
 			this->Controls->Add(this->button1);
-			this->Controls->Add(this->trackBar4);
-			this->Controls->Add(this->label8);
 			this->Controls->Add(this->label7);
 			this->Controls->Add(this->label6);
 			this->Controls->Add(this->label5);
-			this->Controls->Add(this->trackBar3);
-			this->Controls->Add(this->trackBar2);
 			this->Controls->Add(this->label4);
 			this->Controls->Add(this->label3);
 			this->Controls->Add(this->DenoiseTrackbar);
-			this->Controls->Add(this->label2);
 			this->Controls->Add(this->splitter1);
-			this->Controls->Add(this->label1);
 			this->Controls->Add(this->textBox1);
 			this->Name = L"Form1";
 			this->Text = L"Pyrocam...";
 			this->Load += gcnew System::EventHandler(this, &Form1::Form1_Load);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->DenoiseTrackbar))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar2))->EndInit();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar3))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->trackBar4))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox1))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^>(this->pictureBox2))->EndInit();
 			this->groupBox1->ResumeLayout(false);
 			this->groupBox1->PerformLayout();
+			this->groupBox2->ResumeLayout(false);
+			this->groupBox2->PerformLayout();
+			this->groupBox3->ResumeLayout(false);
+			this->groupBox3->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1013,8 +1000,7 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 	}
 	private: System::Void label9_Click(System::Object^  sender, System::EventArgs^  e) {
 	}
-	private: System::Void label10_Click(System::Object^  sender, System::EventArgs^  e) {
-	}
+
 	private: System::Void textBox2_TextChanged(System::Object^  sender, System::EventArgs^  e) {
 	
 	}
@@ -1027,17 +1013,32 @@ private: System::Windows::Forms::TrackBar^  DenoiseTrackbar;
 			&& pGetTemperaturImage && pGetVisibleImage && pGetFrameCounter && pGetFrame && pSetFrame)
 		{
 			error = pInitDeviceGUI();
-			if (error == OK)
+			if (error == OK) {
 				textBox1->Text = "Device Selected, OK" + Environment::NewLine;
+				button3->Enabled = true;
+				}
 			else {
-				textBox1->Text = "FAIL - Error Code: " + System::Convert::ToString(error);
+				textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
 			}
 		}
 	}
 
 	private: System::Void button5_Click(System::Object^  sender, System::EventArgs^  e) {
+		Width = Convert::ToInt32(textBox4->Text);
+		Height = Convert::ToInt32(textBox6->Text);
+		X = Convert::ToInt32(textBox3->Text);
+		Y = Convert::ToInt32(textBox5->Text);
+
+		error = pSetFrame(Width, Height, X, Y);
 
 		
+		if (error == OK) {
+			textBox1->AppendText("Frame Settings - Width: " + Width.ToString() + " Height: " + Height.ToString() + " X: " + X.ToString() + " Y: " + Y.ToString() + Environment::NewLine);
+			button3->Enabled = true;
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
 
 	//cv::imwrite
 
@@ -1046,6 +1047,7 @@ private: System::Void textBox3_TextChanged(System::Object^  sender, System::Even
 }
 private: System::Void button1_Click(System::Object^  sender, System::EventArgs^  e) {
 	streaming = true;
+	button2->Enabled = true;
 	int counter = 0;
 	
 	
@@ -1053,30 +1055,122 @@ private: System::Void button1_Click(System::Object^  sender, System::EventArgs^ 
 	Height = Convert::ToInt32(textBox6->Text);
 	X = Convert::ToInt32(textBox3->Text);
 	Y = Convert::ToInt32(textBox5->Text);
-	//---- Get Frame ----
-	textBox1->AppendText(Environment::NewLine + "Read Camera Frame ..." + Environment::NewLine);
 
+	textBox1->AppendText(Environment::NewLine + "Read Camera Frame ..." + Environment::NewLine);
+	
 	error = pSetFrame(Width, Height, X, Y);
 
 	//error = pGetFrame(&Form1->Width, &Height, &X, &Y);
-	
 
-	//int ThresValue = trackBar4->Value;
-	
-	//error = pSetBacklightSuppressionThreshold(0);  // GetBacklightSuppressionThreshold(threValue);
+	// ----- Backlight Suppression -----
+	bool manualBacklight = radioButton8->Checked;
+	bool autoBacklight = radioButton1->Checked;
+	bool offBacklight = radioButton2->Checked;
 
-	//if (error == OK)
-	//	textBox1->AppendText(Environment::NewLine + "Backlight Suppression Threshold Value = " + trackBar4->Value.ToString()+ Environment::NewLine);
-	//else {
-	//	textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
-	//}
-	//
-	/*error = pSetDenoising(0.85);
+	if (manualBacklight == true) {
+		error = pSetBacklightSuppression(2);
+		if (error == OK) {
+			textBox1->AppendText("Backlight Setting: manual, Value = " + trackBar4->Value.ToString() + Environment::NewLine);
+			int BacklightSuppressionThreshold = trackBar4->Value;
+			error = pSetBacklightSuppressionThreshold(BacklightSuppressionThreshold);
+			if (error == OK) {
+				textBox1->AppendText("Backlight Suppression Threshold = " + trackBar4->Value.ToString() + Environment::NewLine);
+			}
+			else {
+				textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+			}
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+	else if(autoBacklight == true) {
+		error = pSetBacklightSuppression(1);
+		if (error == OK) {
+			textBox1->AppendText("Backlight Setting: manual" + Environment::NewLine);
+		} else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+	else {
+		error = pSetBacklightSuppression(0);
+		if (error == OK) {
+			textBox1->AppendText("Backlight Setting: OFF" + Environment::NewLine);
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+	
+	// ----- Backlight Suppression Clamp Mode -----
+	bool clampModeMin = radioButton4->Checked;
+	bool clampModeMax = radioButton3->Checked;
+
+	if(clampModeMin==true) {
+		error = pSetBacklightSuppressionClampMode(0);
+		if (error == OK) {
+			textBox1->AppendText("Backlight Suppression Clamp Mode: MIN" + Environment::NewLine);
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+	if (clampModeMax == true) {
+		error = pSetBacklightSuppressionClampMode(1);
+		if (error == OK) {
+			textBox1->AppendText("Backlight Suppression Clamp Mode: MAX" + Environment::NewLine);
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+
+
+
+	// ----- Denoising -----
+	error = pSetDenoising(double(DenoiseTrackbar->Value) / 100);
 	if (error == OK)
 		textBox1->AppendText("Denoise Value = " + (double(DenoiseTrackbar->Value)/100).ToString());
 	else {
-		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
-	}*/
+		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);;
+	}
+
+	// ----- Temperature Clamp Mode -----
+	bool tempClampMinMin = radioButton5->Checked;
+	bool tempClampMinMax = radioButton6->Checked;
+	bool tempClampMaxMax = radioButton7->Checked;
+
+	if (tempClampMinMin == true) {
+		error = pSetTemperatureClampMode(0);
+		if (error == OK) {
+			textBox1->AppendText("Temperature Clamp Mode: MIN-MIN" + Environment::NewLine);
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+
+	if (tempClampMinMax == true) {
+		error = pSetTemperatureClampMode(1);
+		if (error == OK) {
+			textBox1->AppendText("Temperature Clamp Mode: MIN-MAX" + Environment::NewLine);
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+
+	if (tempClampMaxMax == true) {
+		error = pSetTemperatureClampMode(2);
+		if (error == OK) {
+			textBox1->AppendText("Temperature Clamp Mode: MAX-MAX" + Environment::NewLine);
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+	}
+
+	// ----- Start Streaming -----
 
 	error = pStartStreaming();
 	if (error == OK) {
@@ -1210,9 +1304,29 @@ private: System::Void button3_Click(System::Object^  sender, System::EventArgs^ 
 	msclr::interop::marshal_context oMC;
 	if (fileDialog->ShowDialog() == System::Windows::Forms::DialogResult::OK) {
 		error = pLoadCalibration(oMC.marshal_as<const char*>(fileDialog->FileName));
+		if (error == OK) {
+			textBox1->AppendText("Calibration File: " + fileDialog->FileName);
+			button4->Enabled = true;
+			button1->Enabled = true;
+			button5->Enabled = true;
+			radioButton8->Enabled = true;
+			radioButton1->Enabled = true;
+			radioButton2->Enabled = true;
+			trackBar4->Enabled = true;
+			radioButton3->Enabled = true;
+			radioButton4->Enabled = true;
+			DenoiseTrackbar->Enabled = true;
+			radioButton5->Enabled = true;
+			radioButton6->Enabled = true;
+			radioButton7->Enabled = true;
+		}
+		else {
+			textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);
+		}
+
 	}
 	
-	textBox1->AppendText("Calibration File: " + fileDialog->FileName);
+	
 	
 }
 private: System::Void textBox5_TextChanged(System::Object^  sender, System::EventArgs^  e) {
@@ -1229,7 +1343,7 @@ private: System::Void button2_Click(System::Object^  sender, System::EventArgs^ 
 		textBox1->AppendText("Stopped Streaming");
 	}
 	else {
-		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error));
+		textBox1->AppendText("FAIL - Error Code: " + System::Convert::ToString(error) + Environment::NewLine);;
 	}
 }
 private: System::Void button7_Click(System::Object^  sender, System::EventArgs^  e) {
@@ -1259,12 +1373,10 @@ private: System::Void button9_Click(System::Object^  sender, System::EventArgs^ 
 }
 private: System::Void groupBox1_Enter(System::Object^  sender, System::EventArgs^  e) {
 }
-private: System::Void radioButton5_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-}
+
 
 private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e) {
-	label10->Text = trackBar2->Value.ToString();
-	label11->Text = trackBar3->Value.ToString();
+
 	label29->Text = DenoiseTrackbar->Value.ToString();
 	label30->Text = trackBar4->Value.ToString();
 
@@ -1300,14 +1412,6 @@ private: System::Void Form1_Load(System::Object^  sender, System::EventArgs^  e)
 	//bildbyte array is for storing the image byte values in the application
 	this->bildbyte = new unsigned char[this->LengthOfArray];
 	std::copy(buffer.begin(), buffer.end(), this->bildbyte);
-}
-
-private: System::Void trackBar3_Scroll(System::Object^  sender, System::EventArgs^  e) {
-	label11->Text = trackBar3->Value.ToString();
-}
-
-private: System::Void trackBar2_Scroll(System::Object^  sender, System::EventArgs^  e) {
-	label10->Text = trackBar2->Value.ToString();
 }
 
 private: System::Void DenoiseTrackbar_Scroll(System::Object^  sender, System::EventArgs^  e) {
@@ -1385,11 +1489,13 @@ private: System::Void videoButton_Click(System::Object^  sender, System::EventAr
 	
 
 }
-private: System::Void radioButton2_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
-	int backlightoff = 0;
-	pSetBacklightSuppression(backlightoff);
+
+
+
+
+private: System::Void DenoiseValue_Click(System::Object^  sender, System::EventArgs^  e) {
 }
-private: System::Void radioButton1_CheckedChanged(System::Object^  sender, System::EventArgs^  e) {
+private: System::Void DenoiseTrackbar_Scroll_1(System::Object^  sender, System::EventArgs^  e) {
 }
 };
 }
